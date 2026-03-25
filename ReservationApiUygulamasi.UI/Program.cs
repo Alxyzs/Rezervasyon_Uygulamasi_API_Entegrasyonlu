@@ -1,9 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using global::System;
+using global::System.Collections.Generic;
+using global::System.Drawing;
+using global::System.IO;
+using global::System.Linq;
+using global::System.Net.Http;
+using global::System.Threading;
+using global::System.Threading.Tasks;
+using global::System.Windows.Forms;
+
 
 namespace ReservationApiUygulamasi.UI
 {
@@ -11,7 +15,7 @@ namespace ReservationApiUygulamasi.UI
 	{
 		static void Main(string[] args)
 		{
-
-		}
+            Application.Run(new ProductList());
+        }
 	}
 }
