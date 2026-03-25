@@ -21,8 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Context\" />
+    <ProjectReference Include="..\ReservationApiUygulamasi.EL\ReservationApiUygulamasi.EL.csproj" />
   </ItemGroup>
 
 </Project>
