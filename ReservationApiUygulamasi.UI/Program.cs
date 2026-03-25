@@ -11,7 +11,7 @@ namespace ReservationApiUygulamasi.UI
 	{
 		static void Main(string[] args)
 		{
-			System.Windows.Forms.MessageBox.Show(DataAdapter"");
+
 		}
 	}
 }
