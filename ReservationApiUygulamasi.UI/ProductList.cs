@@ -8,6 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net.Http;
+using Newtonsoft.Json;
+
 
 namespace ReservationApiUygulamasi.UI
 {
@@ -20,20 +23,49 @@ namespace ReservationApiUygulamasi.UI
 
         private void ProductList_Load(object sender, EventArgs e)
         {
-            LoadMockProducts();
+            //LoadMockProducts();
+            LoadProductsFromApi();
         }
         private List<ProductDto> _products;
-        private void LoadMockProducts() 
+        //    private void LoadMockProducts()
+        //{
+        //    _products = new List<ProductDto>
+        //        {
+        //            new ProductDto { Id = 1, ProductCode = "STK001", ProductName = "Product 1", StockQuantity = 100, WhNumber = 1 },
+        //            new ProductDto { Id = 2, ProductCode = "STK002", ProductName = "Product 2", StockQuantity = 50, WhNumber = 2 },
+        //            new ProductDto { Id = 3, ProductCode = "STK003", ProductName = "Product 3", StockQuantity = 200, WhNumber = 1 },
+        //            new ProductDto { Id = 4, ProductCode = "STK004", ProductName = "Product 4", StockQuantity = 75, WhNumber = 3 },
+        //        };
+        //    dgv_Data.DataSource = _products;
+
+        //}
+
+        private async void LoadProductsFromApi()
         {
-            _products = new List<ProductDto>
+            var apiSettings = ConfigurationHelper.LoadApiSettings();
+
+            using (var client = new HttpClient())
             {
-                new ProductDto { Id = 1, ProductCode = "STK001", ProductName = "Product 1", StockQuantity = 100, WhNumber = 1 },
-                new ProductDto { Id = 2, ProductCode = "STK002", ProductName = "Product 2", StockQuantity = 50, WhNumber = 2 },
-                new ProductDto { Id = 3, ProductCode = "STK003", ProductName = "Product 3", StockQuantity = 200, WhNumber = 1 },
-                new ProductDto { Id = 4, ProductCode = "STK004", ProductName = "Product 4", StockQuantity = 75, WhNumber = 3 },
-            };
-            dgv_Data.DataSource = _products;
+                client.BaseAddress = new Uri(apiSettings.BaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
+
+                var response = await client.GetAsync("api/products"); // await burada gerekli
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    _products = JsonConvert.DeserializeObject<List<ProductDto>>(json);
+
+                    dgv_Data.DataSource = null;
+                    dgv_Data.DataSource = _products;
+                }
+                else
+                {
+                    MessageBox.Show("API'den veri alınamadı: " + response.StatusCode);
+                }
+            }
         }
+
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {

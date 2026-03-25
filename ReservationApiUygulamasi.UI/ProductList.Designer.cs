@@ -36,7 +36,7 @@
             // 
             // btnReserveSelected
             // 
-            this.btnReserveSelected.Location = new System.Drawing.Point(513, 39);
+            this.btnReserveSelected.Location = new System.Drawing.Point(382, 302);
             this.btnReserveSelected.Name = "btnReserveSelected";
             this.btnReserveSelected.Size = new System.Drawing.Size(275, 23);
             this.btnReserveSelected.TabIndex = 0;
@@ -46,7 +46,7 @@
             // 
             // txtSearch
             // 
-            this.txtSearch.Location = new System.Drawing.Point(76, 42);
+            this.txtSearch.Location = new System.Drawing.Point(92, 305);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(270, 20);
             this.txtSearch.TabIndex = 1;
@@ -55,9 +55,9 @@
             // dgv_Data
             // 
             this.dgv_Data.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgv_Data.Location = new System.Drawing.Point(98, 106);
+            this.dgv_Data.Location = new System.Drawing.Point(12, 3);
             this.dgv_Data.Name = "dgv_Data";
-            this.dgv_Data.Size = new System.Drawing.Size(592, 270);
+            this.dgv_Data.Size = new System.Drawing.Size(776, 270);
             this.dgv_Data.TabIndex = 2;
             this.dgv_Data.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_Data_CellContentDoubleClick);
             // 
