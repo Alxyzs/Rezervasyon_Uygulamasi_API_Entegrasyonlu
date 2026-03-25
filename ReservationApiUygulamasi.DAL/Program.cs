@@ -10,8 +10,7 @@ namespace ReservationApiUygulamasi.DAL
 	{
 		static void Main(string[] args)
 		{
-			System.Windows.Forms.MessageBox.Show("Test");
-			System.Windows.Forms.MessageBox.Show("masster");
+
 		}
 	}
 }
