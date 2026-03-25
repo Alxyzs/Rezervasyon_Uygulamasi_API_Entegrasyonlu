@@ -21,13 +21,16 @@ namespace ReservationApiUygulamasi.UI
             InitializeComponent();
         }
 
-        private void ProductList_Load(object sender, EventArgs e)
+        private async void ProductList_Load(object sender, EventArgs e)
+        //private void ProductList_Load(object sender, EventArgs e)
         {
             //LoadMockProducts();
-            LoadProductsFromApi();
+            await LoadProductsFromApi();
         }
+
         private List<ProductDto> _products;
-        //    private void LoadMockProducts()
+
+        //private void LoadMockProducts()
         //{
         //    _products = new List<ProductDto>
         //        {
@@ -39,34 +42,38 @@ namespace ReservationApiUygulamasi.UI
         //    dgv_Data.DataSource = _products;
 
         //}
-
-        private async void LoadProductsFromApi()
+        private async Task LoadProductsFromApi()
         {
-            var apiSettings = ConfigurationHelper.LoadApiSettings();
-
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri(apiSettings.BaseUrl);
-                client.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
+                var apiSettings = ConfigurationHelper.LoadApiSettings();
 
-                var response = await client.GetAsync("api/products"); // await burada gerekli
-
-                if (response.IsSuccessStatusCode)
+                using (var client = new HttpClient())
                 {
-                    var json = await response.Content.ReadAsStringAsync();
-                    _products = JsonConvert.DeserializeObject<List<ProductDto>>(json);
+                    client.BaseAddress = new Uri(apiSettings.BaseUrl);
+                    client.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
 
-                    dgv_Data.DataSource = null;
-                    dgv_Data.DataSource = _products;
-                }
-                else
-                {
-                    MessageBox.Show("API'den veri alınamadı: " + response.StatusCode);
+                    var response = await client.GetAsync("api/products");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        _products = JsonConvert.DeserializeObject<List<ProductDto>>(json);
+
+                        dgv_Data.DataSource = null;
+                        dgv_Data.DataSource = _products;
+                    }
+                    else
+                    {
+                        MessageBox.Show($"API'den veri alınamadı: {response.StatusCode} - {response.ReasonPhrase}");
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Bir hata oluştu: " + ex.Message);
+            }
         }
-
-
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             string searchText = txtSearch.Text.Trim();
@@ -79,20 +86,17 @@ namespace ReservationApiUygulamasi.UI
             dgv_Data.DataSource = null;
             dgv_Data.DataSource = filtered;
         }
-
-
         private void dgv_Data_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
             {
                 var selectedProduct = (ProductDto)dgv_Data.Rows[e.RowIndex].DataBoundItem;
-                DialogResult result = MessageBox.Show($"Do you want to reserve {selectedProduct.ProductName}?", "Ürünü rezerve edilsin mi?", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show(
+                    $"Ürünü rezerve etmek istiyor musun? {selectedProduct.ProductName}?",
+                    "Ürünü rezerve edilsin mi?",
+                    MessageBoxButtons.YesNo);
 
-                if (result == DialogResult.Yes)
-                {
-                    MessageBox.Show("Rezervazyon yapıldı (mock)");
-                    //api çağrısı yapılacak
-                }
+                ShowReservationMessage(selectedProduct, result);
             }
         }
 
@@ -101,23 +105,30 @@ namespace ReservationApiUygulamasi.UI
             if (dgv_Data.CurrentRow != null)
             {
                 var selectedProduct = (ProductDto)dgv_Data.CurrentRow.DataBoundItem;
-                DialogResult result = MessageBox.Show($"Do you want to reserve {selectedProduct.ProductName}?", "Ürünü rezerve edilsin mi?", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show(
+                    $"Ürünü rezerve etmek istiyor musun? {selectedProduct.ProductName}?",
+                    "Ürünü rezerve edilsin mi?",
+                    MessageBoxButtons.YesNo);
 
-                if (result == DialogResult.Yes)
-                {
-                    MessageBox.Show("Rezervazyon yapıldı (mock)");
-                    //api çağrısı yapılacak
-                }
-
-                else if (result == DialogResult.No)
-                {
-                    MessageBox.Show("Rezervasyon iptal edildi.");
-                }
-                else
-                {
-                    MessageBox.Show("Lütfen önce bir ürün seçin.");
-                }
+                ShowReservationMessage(selectedProduct, result);
             }
         }
+        private void ShowReservationMessage(ProductDto product, DialogResult result)  // kod tekrarı olmaması için ayrı bir method yaptım.
+        {
+            if (result == DialogResult.Yes)
+            {
+                MessageBox.Show($"{product.ProductName} ürünü için rezervasyon işlemi başarıyla gerçekleştirildi. (Test amaçlı)");
+                // Gerçek API çağrısı burada yapılacak
+            }
+            else if (result == DialogResult.No)
+            {
+                MessageBox.Show("Rezervasyon işlemi iptal edildi.");
+            }
+            else
+            {
+                MessageBox.Show("Lütfen önce bir ürün seçin.");
+            }
+        }
+
     }
 }
