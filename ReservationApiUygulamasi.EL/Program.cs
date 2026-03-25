@@ -10,7 +10,7 @@ namespace ReservationApiUygulamasi.EL
 	{
 		static void Main(string[] args)
 		{
-			System.Windows.Forms.MessageBox.Show("Test2");
+
 		}
 	}
 }
