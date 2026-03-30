@@ -19,7 +19,7 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 		[HttpGet]
 		public async Task<ActionResult<List<ProductDto>>> GetAll()
 		{
-			var values = await _context.ProductDto.ToListAsync();
+			var values = await _context.ProductDto.Where(x => x.StockQuantity > 0).ToListAsync();
 			return Ok(values);
 		}
 	}
