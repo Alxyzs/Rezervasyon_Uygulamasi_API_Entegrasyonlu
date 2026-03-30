@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Http;
 using Newtonsoft.Json;
+using System.Xml.Linq;
 
 
 namespace ReservationApiUygulamasi.UI
@@ -21,11 +22,20 @@ namespace ReservationApiUygulamasi.UI
             InitializeComponent();
         }
 
+        private HttpClientHandler GetSSL()
+        {
+            return new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (m, c, ch, e) => true
+            };
+        }
+
         private async void ProductList_Load(object sender, EventArgs e)
         //private void ProductList_Load(object sender, EventArgs e)
         {
             //LoadMockProducts();
             await LoadProductsFromApi();
+            dgv_Data.Columns["id"].Visible = false;
         }
 
         private List<ProductDto> _products;
@@ -46,14 +56,19 @@ namespace ReservationApiUygulamasi.UI
         {
             try
             {
+                var handler = new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = (m, c, ch, e) => true
+                };
+
                 var apiSettings = ConfigurationHelper.LoadApiSettings();
 
-                using (var client = new HttpClient())
+                using (var client = new HttpClient(GetSSL()))
                 {
                     client.BaseAddress = new Uri(apiSettings.BaseUrl);
                     client.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
 
-                    var response = await client.GetAsync("api/products");
+                    var response = await client.GetAsync("api/Products");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -62,10 +77,6 @@ namespace ReservationApiUygulamasi.UI
 
                         dgv_Data.DataSource = null;
                         dgv_Data.DataSource = _products;
-                    }
-                    else
-                    {
-                        MessageBox.Show($"API'den veri alınamadı: {response.StatusCode} - {response.ReasonPhrase}");
                     }
                 }
             }
@@ -85,34 +96,72 @@ namespace ReservationApiUygulamasi.UI
 
             dgv_Data.DataSource = null;
             dgv_Data.DataSource = filtered;
+            dgv_Data.Columns["id"].Visible = false;
         }
-        private void dgv_Data_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0)
-            {
-                var selectedProduct = (ProductDto)dgv_Data.Rows[e.RowIndex].DataBoundItem;
-                DialogResult result = MessageBox.Show(
-                    $"Ürünü rezerve etmek istiyor musun? {selectedProduct.ProductName}?",
-                    "Ürünü rezerve edilsin mi?",
-                    MessageBoxButtons.YesNo);
-
-                ShowReservationMessage(selectedProduct, result);
-            }
-        }
-
-        private void btnReserveSelected_Click(object sender, EventArgs e)
+        private async void btnReserveSelected_Click(object sender, EventArgs e)
         {
             if (dgv_Data.CurrentRow != null)
             {
                 var selectedProduct = (ProductDto)dgv_Data.CurrentRow.DataBoundItem;
-                DialogResult result = MessageBox.Show(
-                    $"Ürünü rezerve etmek istiyor musun? {selectedProduct.ProductName}?",
-                    "Ürünü rezerve edilsin mi?",
-                    MessageBoxButtons.YesNo);
+                int MalzemKodu = Convert.ToInt32(txtproductRef.Text);
+                string Notes = txtNotes.Text;
+                
+                double  miktar = selectedProduct.StockQuantity; // textbox’tan al
 
-                ShowReservationMessage(selectedProduct, result);
+                bool success = await SendReservationToApi
+                    (
+                    MalzemKodu,
+                    Notes,
+                    miktar
+                    );
+
+                if (success)
+                    MessageBox.Show("Rezervasyon alınmıştır.");
+                else
+                    MessageBox.Show("Rezervasyon gönderilemedi.");
             }
         }
+
+        private async Task<bool> SendReservationToApi(int MalzemeInt, string Note, double quantity)
+        {
+            try
+            {
+                var apiSettings = ConfigurationHelper.LoadApiSettings();
+
+                using (var client = new HttpClient(GetSSL()))
+                {
+                    client.BaseAddress = new Uri(apiSettings.BaseUrl);
+                    client.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
+
+                    var data = new
+                    {
+                        ProductRef = MalzemeInt,
+                        Notes = Note,
+                        ReservedQty = quantity
+                    };
+
+                    var json = JsonConvert.SerializeObject(data);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync("api/Reservations", content);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var error = await response.Content.ReadAsStringAsync();
+                        MessageBox.Show(error);
+                    }
+
+                    return response.IsSuccessStatusCode;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("API hatası: " + ex.Message);
+                return false;
+            }
+        }
+
+        // ShowReservationMessage methodu şuan için buton click eventinde çalışmıyor, düzeltilecek.
         private void ShowReservationMessage(ProductDto product, DialogResult result)  // kod tekrarı olmaması için ayrı bir method yaptım.
         {
             if (result == DialogResult.Yes)
@@ -130,5 +179,13 @@ namespace ReservationApiUygulamasi.UI
             }
         }
 
+        private void dgv_Data_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if(e.RowIndex > 0)
+            { 
+                txtproductRef.Text = dgv_Data.Rows[e.RowIndex].Cells["Id"].Value.ToString();
+                txtstockQuantity.Text = dgv_Data.Rows[e.RowIndex].Cells["StockQuantity"].Value.ToString();
+            }
+        }
     }
 }

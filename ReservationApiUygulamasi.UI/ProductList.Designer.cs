@@ -31,22 +31,34 @@
             this.btnReserveSelected = new System.Windows.Forms.Button();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.dgv_Data = new System.Windows.Forms.DataGridView();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtproductRef = new System.Windows.Forms.TextBox();
+            this.txtstockQuantity = new System.Windows.Forms.TextBox();
+            this.txtNotes = new System.Windows.Forms.RichTextBox();
+            this.lnlNot = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Data)).BeginInit();
             this.SuspendLayout();
             // 
             // btnReserveSelected
             // 
-            this.btnReserveSelected.Location = new System.Drawing.Point(382, 302);
+            this.btnReserveSelected.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.btnReserveSelected.FlatAppearance.BorderSize = 0;
+            this.btnReserveSelected.FlatAppearance.MouseDownBackColor = System.Drawing.Color.LimeGreen;
+            this.btnReserveSelected.FlatAppearance.MouseOverBackColor = System.Drawing.Color.DeepSkyBlue;
+            this.btnReserveSelected.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReserveSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnReserveSelected.ForeColor = System.Drawing.Color.White;
+            this.btnReserveSelected.Location = new System.Drawing.Point(264, 395);
             this.btnReserveSelected.Name = "btnReserveSelected";
-            this.btnReserveSelected.Size = new System.Drawing.Size(275, 23);
+            this.btnReserveSelected.Size = new System.Drawing.Size(332, 42);
             this.btnReserveSelected.TabIndex = 0;
             this.btnReserveSelected.Text = "Seçili Ürünü Rezerve Et";
-            this.btnReserveSelected.UseVisualStyleBackColor = true;
+            this.btnReserveSelected.UseVisualStyleBackColor = false;
             this.btnReserveSelected.Click += new System.EventHandler(this.btnReserveSelected_Click);
             // 
             // txtSearch
             // 
-            this.txtSearch.Location = new System.Drawing.Point(92, 305);
+            this.txtSearch.Location = new System.Drawing.Point(295, 312);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(270, 20);
             this.txtSearch.TabIndex = 1;
@@ -54,23 +66,77 @@
             // 
             // dgv_Data
             // 
+            this.dgv_Data.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgv_Data.BackgroundColor = System.Drawing.Color.BlanchedAlmond;
             this.dgv_Data.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgv_Data.Location = new System.Drawing.Point(12, 3);
+            this.dgv_Data.Location = new System.Drawing.Point(12, 18);
             this.dgv_Data.Name = "dgv_Data";
             this.dgv_Data.Size = new System.Drawing.Size(776, 270);
             this.dgv_Data.TabIndex = 2;
-            this.dgv_Data.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_Data_CellContentDoubleClick);
+            this.dgv_Data.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_Data_CellClick);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(229, 312);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(51, 20);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "ARA:";
+            // 
+            // txtproductRef
+            // 
+            this.txtproductRef.Location = new System.Drawing.Point(55, 312);
+            this.txtproductRef.Name = "txtproductRef";
+            this.txtproductRef.Size = new System.Drawing.Size(100, 20);
+            this.txtproductRef.TabIndex = 4;
+            this.txtproductRef.Visible = false;
+            // 
+            // txtstockQuantity
+            // 
+            this.txtstockQuantity.Location = new System.Drawing.Point(55, 339);
+            this.txtstockQuantity.Name = "txtstockQuantity";
+            this.txtstockQuantity.Size = new System.Drawing.Size(100, 20);
+            this.txtstockQuantity.TabIndex = 5;
+            this.txtstockQuantity.Visible = false;
+            // 
+            // txtNotes
+            // 
+            this.txtNotes.Location = new System.Drawing.Point(339, 339);
+            this.txtNotes.Name = "txtNotes";
+            this.txtNotes.Size = new System.Drawing.Size(183, 48);
+            this.txtNotes.TabIndex = 6;
+            this.txtNotes.Text = "";
+            // 
+            // lnlNot
+            // 
+            this.lnlNot.AutoSize = true;
+            this.lnlNot.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lnlNot.ForeColor = System.Drawing.Color.White;
+            this.lnlNot.Location = new System.Drawing.Point(229, 339);
+            this.lnlNot.Name = "lnlNot";
+            this.lnlNot.Size = new System.Drawing.Size(49, 20);
+            this.lnlNot.TabIndex = 7;
+            this.lnlNot.Text = "NOT:";
             // 
             // ProductList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.BackColor = System.Drawing.Color.SkyBlue;
+            this.ClientSize = new System.Drawing.Size(799, 447);
+            this.Controls.Add(this.lnlNot);
+            this.Controls.Add(this.txtNotes);
+            this.Controls.Add(this.txtstockQuantity);
+            this.Controls.Add(this.txtproductRef);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.dgv_Data);
             this.Controls.Add(this.txtSearch);
             this.Controls.Add(this.btnReserveSelected);
             this.Name = "ProductList";
-            this.Text = "ProductList";
+            this.Text = "Rezervasyon İşlemi";
             this.Load += new System.EventHandler(this.ProductList_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Data)).EndInit();
             this.ResumeLayout(false);
@@ -83,5 +149,10 @@
         private System.Windows.Forms.Button btnReserveSelected;
         private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.DataGridView dgv_Data;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtproductRef;
+        private System.Windows.Forms.TextBox txtstockQuantity;
+        private System.Windows.Forms.RichTextBox txtNotes;
+        private System.Windows.Forms.Label lnlNot;
     }
 }
