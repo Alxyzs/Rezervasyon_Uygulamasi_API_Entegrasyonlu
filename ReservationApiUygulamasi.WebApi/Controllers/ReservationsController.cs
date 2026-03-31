@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ReservationApiUygulamasi.WebApi.Context;
 using ReservationApiUygulamasi.EL.ApiModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReservationApiUygulamasi.WebApi.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize] //Auth olduktan sorna calıssın dıye eklendi
 	public class ReservationsController : ControllerBase
 	{
 		private readonly ApiContext _context;

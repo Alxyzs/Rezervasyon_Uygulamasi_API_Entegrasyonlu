@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReservationApiUygulamasi.EL.ApiModels;
 using ReservationApiUygulamasi.WebApi.Context;
@@ -7,6 +8,7 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize] //Sadece Auth olan kullanıcı erişebilir .
 	public class ProductsController : ControllerBase
 	{
 		private readonly ApiContext _context;

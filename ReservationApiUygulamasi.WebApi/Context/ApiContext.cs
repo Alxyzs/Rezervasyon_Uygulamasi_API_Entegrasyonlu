@@ -12,8 +12,9 @@ namespace ReservationApiUygulamasi.WebApi.Context
 
         public DbSet<ProductDto> ProductDto { get; set; }
         public DbSet<ReservationDto> ReservationDto { get; set; }
+        public DbSet<UserDto> UserDto { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ReservationDto>().HasKey(x => x.ProductRef);
         }
