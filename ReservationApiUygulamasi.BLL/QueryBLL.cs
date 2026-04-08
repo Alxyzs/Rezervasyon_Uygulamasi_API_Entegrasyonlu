@@ -1,4 +1,5 @@
 ﻿using ReservationApiUygulamasi.DAL;
+using ReservationApiUygulamasi.EL.ApiModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ReservationApiUygulamasi.BLL
 {
 	public static class QueryBLL
 	{
-		public static List<string> GetSearchUser(string username, string password)
+		public static List<UserDto> GetSearchUser(string username, string password)
 		{
 			return new QueryDAL().GetSearchUser(username, password);
 		}

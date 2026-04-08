@@ -11,11 +11,12 @@ namespace ReservationApiUygulamasi.EL.ApiModels
 	public class ReservationDto
 	{
 		[Key]
-		public int ProductRef { get; set; }
-		public double ReservedQty { get; set; }
+		public int Id { get; set; }
+		public int? ProductRef { get; set; }
+		public decimal? ReservedQty { get; set; }
 		public string? Notes { get; set; }
-		public int UserID { get; set; }
+		public int? UserID { get; set; }
 		//[JsonIgnore] //Api'de gösterilmesini istemediğimiz bir alan varsa JsonIgnore ile gizlenir.
-		//public DateTime DATE{ get; set; } = DateTime.Now; kapattım cunku sqlde getdate() verdim
+		public DateTime? DATE { get; set; }//= DateTime.Now;
 	}
 }

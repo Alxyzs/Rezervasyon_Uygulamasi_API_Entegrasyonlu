@@ -9,6 +9,7 @@ using ReservationApiUygulamasi.EL;
 using Microsoft.AspNetCore.Identity.Data;
 using ReservationApiUygulamasi.EL.ApiModels;
 using ReservationApiUygulamasi.BLL;
+using ReservationApiUygulamasi.EL.QueryModels;
 namespace ReservationApiUygulamasi.WebApi.Controllers
 {
 	[Route("api/[controller]")]
@@ -35,6 +36,9 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			var accaountStatus = QueryBLL.GetSearchUser(loginRequest.Username ?? "", loginRequest.Password ?? "");
 			if (accaountStatus == null || accaountStatus.Count == 0 )
 				return Unauthorized("Kullanıcı adı veya şifre hatalı.");
+
+			InstantUser.UserID = accaountStatus.FirstOrDefault().ID;
+
 
 			var claims = new[]
 			{

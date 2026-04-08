@@ -1,12 +1,19 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ReservationApiUygulamasi.EL.ApiModels;
+using ReservationApiUygulamasi.WebApi.Context;
+using ReservationApiUygulamasi.WebApi.ValidationRules;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddDbContext<ApiContext>();
 
+// VALIDATOR calýsmasý icin eklendi .
+builder.Services.AddScoped<IValidator<ReservationDto>,ReservationValidator>();
+// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -50,7 +57,7 @@ builder.Services.AddEndpointsApiExplorer();
 	});
 #endregion
 //
-
+	
 // ----- AUTH ÝÇÝN EKLENDÝ - BENIM JWT TOKEN .
 #region Authorize için 
 
@@ -82,6 +89,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+	//app.UseDeveloperExceptionPage();
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
@@ -89,6 +97,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();//Bu Authorize için Authorizeden önce olacak
+
+app.UseMiddleware<LogMiddleware>(); //LogMiddleware'i kullanarak gelen istekleri ve giden cevaplarý loglamak için ekledik . Loglama iþlemi için kullanýlýr. Gelen isteklerin ve giden cevaplarýn detaylarýný kaydeder.
 
 app.UseAuthorization();
 

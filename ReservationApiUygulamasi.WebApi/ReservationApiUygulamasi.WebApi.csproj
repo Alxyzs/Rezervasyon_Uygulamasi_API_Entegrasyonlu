@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.36" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.36" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.36">
@@ -23,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ReservationApiUygulamasi.BLL\ReservationApiUygulamasi.BLL.csproj" />
+    <ProjectReference Include="..\ReservationApiUygulamasi.DAL\ReservationApiUygulamasi.DAL.csproj" />
     <ProjectReference Include="..\ReservationApiUygulamasi.EL\ReservationApiUygulamasi.EL.csproj" />
   </ItemGroup>
 

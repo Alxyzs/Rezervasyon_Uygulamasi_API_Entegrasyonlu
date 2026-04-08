@@ -22,6 +22,9 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 		[HttpGet]
 		public async Task<ActionResult<List<UserDto>>> GetAllUser()
 		{
+			if (_context.UserDto == null)
+				return Problem(" 'ApiContext.ReservationDto'  is null."); //NUL Referencess Hatası için .
+
 			var values = await _context.UserDto.ToListAsync();
 			return Ok(values);
 		}
@@ -29,6 +32,9 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 		[HttpPost]
 		public async Task<IActionResult> InsertUser([FromBody] UserDto dto)
 		{
+			if (_context.UserDto == null)
+				return Problem(" 'ApiContext.ReservationDto'  is null.");
+
 			await _context.UserDto.AddAsync(dto);
 			await _context.SaveChangesAsync();
 
