@@ -1,17 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 
-namespace ReservationApiUygulamasi.UI.Models
+public class ProductDto
 {
-    public class ProductDto
-    {
-        public int Id { get; set; }
-        public string ProductCode { get; set; }
-        public string ProductName { get; set; }
-        public double StockQuantity { get; set; }
-        public int WhNumber { get; set; }
-    }
+    [JsonProperty("id")]
+    public int Id { get; set; }
+
+    [JsonProperty("productName")]
+    public string ProductName { get; set; }
+
+    [JsonProperty("productCode")]
+    public string ProductCode { get; set; }
+
+    [JsonProperty("stockQuantity")]
+    public double StockQuantity { get; set; }
+
+    [JsonProperty("stockStatus")]
+    public string StockStatus { get; set; }
 }

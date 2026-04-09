@@ -1,27 +1,51 @@
 ﻿using ReservationApiUygulamasi.UI.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Http;
 using Newtonsoft.Json;
-using System.Xml.Linq;
+using System.Drawing;
 
 
 namespace ReservationApiUygulamasi.UI
 {
     public partial class ProductList : Form
     {
+        private HttpClient _client;
+        private List<ProductDto> _products;
+
         public ProductList()
         {
             InitializeComponent();
+            InitializeHttpClient();
         }
 
+        private void InitializeHttpClient()
+        {
+            var apiSettings = ConfigurationHelper.LoadApiSettings();
+
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (m, c, ch, e) => true
+            };
+
+            _client = new HttpClient(handler)
+            {
+                BaseAddress = new Uri(apiSettings.BaseUrl),
+                Timeout = TimeSpan.FromSeconds(apiSettings.Timeout)
+            };
+
+            var token = ConfigurationHelper.LoadAppSettings().Token;
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                _client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+        }
         private HttpClientHandler GetSSL()
         {
             return new HttpClientHandler
@@ -31,42 +55,28 @@ namespace ReservationApiUygulamasi.UI
         }
 
         private async void ProductList_Load(object sender, EventArgs e)
-        //private void ProductList_Load(object sender, EventArgs e)
         {
-            //LoadMockProducts();
             await LoadProductsFromApi();
             dgv_Data.Columns["id"].Visible = false;
         }
 
-        private List<ProductDto> _products;
-
-        //private void LoadMockProducts()
-        //{
-        //    _products = new List<ProductDto>
-        //        {
-        //            new ProductDto { Id = 1, ProductCode = "STK001", ProductName = "Product 1", StockQuantity = 100, WhNumber = 1 },
-        //            new ProductDto { Id = 2, ProductCode = "STK002", ProductName = "Product 2", StockQuantity = 50, WhNumber = 2 },
-        //            new ProductDto { Id = 3, ProductCode = "STK003", ProductName = "Product 3", StockQuantity = 200, WhNumber = 1 },
-        //            new ProductDto { Id = 4, ProductCode = "STK004", ProductName = "Product 4", StockQuantity = 75, WhNumber = 3 },
-        //        };
-        //    dgv_Data.DataSource = _products;
-
-        //}
         private async Task LoadProductsFromApi()
         {
             try
             {
-                var handler = new HttpClientHandler()
-                {
-                    ServerCertificateCustomValidationCallback = (m, c, ch, e) => true
-                };
-
                 var apiSettings = ConfigurationHelper.LoadApiSettings();
+                var token = ConfigurationHelper.LoadAppSettings().Token;
 
                 using (var client = new HttpClient(GetSSL()))
                 {
                     client.BaseAddress = new Uri(apiSettings.BaseUrl);
                     client.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
+
+                    if (!string.IsNullOrWhiteSpace(token))
+                        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                    //#RestSharp Nuget package'dan indirilebilir.
+
 
                     var response = await client.GetAsync("api/Products");
 
@@ -77,6 +87,39 @@ namespace ReservationApiUygulamasi.UI
 
                         dgv_Data.DataSource = null;
                         dgv_Data.DataSource = _products;
+
+                        foreach (DataGridViewRow row in dgv_Data.Rows)
+                        {
+                            if (row.Cells["StockQuantity"].Value != null)
+                            {
+                                int stock = Convert.ToInt32(row.Cells["StockQuantity"].Value);
+                                var cell = row.Cells["StockStatus"];
+
+                                if (stock < 10)
+                                {
+                                    cell.Value = "Az";
+                                    cell.Style.BackColor = Color.Red;
+                                    cell.Style.ForeColor = Color.White;
+                                }
+                                else if (stock < 50)
+                                {
+                                    cell.Value = "Orta";
+                                    cell.Style.BackColor = Color.Orange;
+                                    cell.Style.ForeColor = Color.Black;
+                                }
+                                else
+                                {
+                                    cell.Value = "Fazla";
+                                    cell.Style.BackColor = Color.Green;
+                                    cell.Style.ForeColor = Color.White;
+                                }
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Ürünler alınamadı: {response.StatusCode}");
                     }
                 }
             }
@@ -98,94 +141,128 @@ namespace ReservationApiUygulamasi.UI
             dgv_Data.DataSource = filtered;
             dgv_Data.Columns["id"].Visible = false;
         }
+
+
         private async void btnReserveSelected_Click(object sender, EventArgs e)
         {
-            if (dgv_Data.CurrentRow != null)
+            if (dgv_Data.CurrentRow == null)
             {
-                var selectedProduct = (ProductDto)dgv_Data.CurrentRow.DataBoundItem;
-                int MalzemKodu = Convert.ToInt32(txtproductRef.Text);
-                string Notes = txtNotes.Text;
-                
-                double  miktar = selectedProduct.StockQuantity; // textbox’tan al
-
-                bool success = await SendReservationToApi
-                    (
-                    MalzemKodu,
-                    Notes,
-                    miktar
-                    );
-
-                if (success)
-                    MessageBox.Show("Rezervasyon alınmıştır.");
-                else
-                    MessageBox.Show("Rezervasyon gönderilemedi.");
+                MessageBox.Show("Lütfen Malzeme Seçiniz...");
+                return;
             }
+
+            int UserID = CurrentUser.UserID;
+            var selectedProduct = (ProductDto)dgv_Data.CurrentRow.DataBoundItem;
+            int MalzemKodu = Convert.ToInt32(txtproductRef.Text);
+            string Notes = txtNotes.Text;
+            double miktar = selectedProduct.StockQuantity;
+
+            bool success = await SendReservationToApi(UserID, MalzemKodu, Notes, miktar);
+            MessageBox.Show(success ? "Rezervasyon alınmıştır." : "Rezervasyon gönderilemedi.");
+        }
+        void AuthorizeOtomatik()
+        {
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ConfigurationHelper.LoadAppSettings().Token);
         }
 
-        private async Task<bool> SendReservationToApi(int MalzemeInt, string Note, double quantity)
+        private async Task<bool> SendReservationToApi(int UserID, int MalzemeInt, string Note, double quantity)
         {
+            if (_client == null) throw new InvalidOperationException("_client henüz oluşturulmamış.");
+
+            var data = new
+            {
+                UserID,
+                ProductRef = MalzemeInt,
+                Notes = Note,
+                ReservedQty = quantity,
+                date = DateTime.Now
+            };
+
+            var json = JsonConvert.SerializeObject(data);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
             try
             {
-                var apiSettings = ConfigurationHelper.LoadApiSettings();
+                var response = await _client.PostAsync("api/Reservations", content);
 
-                using (var client = new HttpClient(GetSSL()))
+                if (!response.IsSuccessStatusCode)
                 {
-                    client.BaseAddress = new Uri(apiSettings.BaseUrl);
-                    client.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
+                    var errorContent = await response.Content.ReadAsStringAsync();
 
-                    var data = new
+                    try
                     {
-                        ProductRef = MalzemeInt,
-                        Notes = Note,
-                        ReservedQty = quantity
-                    };
+                        var errors = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(errorContent);
 
-                    var json = JsonConvert.SerializeObject(data);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                        if (errors != null && errors.Any())
+                        {
+                            var allErrors = string.Join(Environment.NewLine,
+                                errors.SelectMany(e => e.Value.Select(msg => $"{e.Key}: {msg}")));
 
-                    var response = await client.PostAsync("api/Reservations", content);
-
-                    if (!response.IsSuccessStatusCode)
+                            MessageBox.Show(allErrors, "Validation Errors", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        else
+                        {
+                            MessageBox.Show(errorContent + "\nCode: " + response.StatusCode, "API Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    catch
                     {
-                        var error = await response.Content.ReadAsStringAsync();
-                        MessageBox.Show(error);
+                        MessageBox.Show(errorContent + "\nCode: " + response.StatusCode, "API Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
 
-                    return response.IsSuccessStatusCode;
+                    return false;
                 }
+
+                return true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("API hatası: " + ex.Message);
+                MessageBox.Show("API hatası: " + ex.Message, "API Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
-
-        // ShowReservationMessage methodu şuan için buton click eventinde çalışmıyor, düzeltilecek.
-        private void ShowReservationMessage(ProductDto product, DialogResult result)  // kod tekrarı olmaması için ayrı bir method yaptım.
+        private void dgv_Data_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (result == DialogResult.Yes)
+            if (e.RowIndex > 0)
             {
-                MessageBox.Show($"{product.ProductName} ürünü için rezervasyon işlemi başarıyla gerçekleştirildi. (Test amaçlı)");
-                // Gerçek API çağrısı burada yapılacak
-            }
-            else if (result == DialogResult.No)
-            {
-                MessageBox.Show("Rezervasyon işlemi iptal edildi.");
-            }
-            else
-            {
-                MessageBox.Show("Lütfen önce bir ürün seçin.");
+                txtproductRef.Text = dgv_Data.Rows[e.RowIndex].Cells["Id"].Value.ToString();
+                txtNotes.Text = dgv_Data.Rows[e.RowIndex].Cells["productName"].Value.ToString();
+                txtstockQuantity.Text = dgv_Data.Rows[e.RowIndex].Cells["StockQuantity"].Value.ToString();
             }
         }
 
-        private void dgv_Data_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void btnGoBack_Click(object sender, EventArgs e)
         {
-            if(e.RowIndex > 0)
-            { 
-                txtproductRef.Text = dgv_Data.Rows[e.RowIndex].Cells["Id"].Value.ToString();
-                txtstockQuantity.Text = dgv_Data.Rows[e.RowIndex].Cells["StockQuantity"].Value.ToString();
+            FrmSelection frm = new FrmSelection();
+            frm.Show();
+            this.Hide();
+        }
+
+        private void ProductList_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                var result = MessageBox.Show(
+                    "Uygulamadan çıkmak istediğinizden emin misiniz?",
+                    "Çıkış Onayı",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (result == DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    Application.Exit();
+                }
             }
+        }
+
+        private void txtNotes_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
