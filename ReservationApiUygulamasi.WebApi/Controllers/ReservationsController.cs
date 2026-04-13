@@ -28,7 +28,14 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 				return Problem(" 'ApiContext.ReservationDto'  is null."); //NUL Referencess Hatası için .
 
 			var values = await _context.ReservationDto.ToListAsync();
-			return Ok(values);
+
+			//return Ok(values); eski zata 200 Kod döndürür ve VALUES'i
+			return Ok(new ApiResponse<List<ReservationDto>>
+			{
+				Success = true,
+				Message = "Rezervasyonlar listelendi",
+				Data = values
+			});//Bu Yapı ise Tam Response Yapsını ve ApiResponse sınıfı ise standart bir API cevabı yapısıdır . Success Message ve Data gibi alanları içerir | APIden dönen cevabın tutarlı ve anlaşılır olmasını sağlar.
 		}
 
 		[HttpPost]

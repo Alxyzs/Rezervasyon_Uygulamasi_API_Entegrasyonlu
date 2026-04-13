@@ -62,7 +62,15 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			);
 
 			var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken); //Burası token'ı string formatına dönüştürür ve client'a gönderilir . Token'ı oluşturur ve string formatına dönüştürür.Kullanıcıya döndürülecek olan token'ı oluşturur ve string formatına dönüştürür.
-			return Ok(token);
+			
+			//return Ok(token); eski'de responsede sadece Token dönerdi
+
+			return Ok(new ApiResponse<string>
+			{
+				Success = true,
+				Message = "Token oluşturuldu",
+				Data = token
+			}); //Bu Yapı ise Tam Response Yapsısını ve ApiResponse sınıfı ise standart bir API cevabı yapısıdır . Success Message ve Data gibi alanları içerir | APIden dönen cevabın tutarlı ve anlaşılır olmasını sağlar.
 
 		}
 
