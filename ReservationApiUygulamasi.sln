@@ -1,15 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36401.2 d17.14
+VisualStudioVersion = 17.14.36401.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationApiUygulamasi.UI", "ReservationApiUygulamasi.UI\ReservationApiUygulamasi.UI.csproj", "{4E5ADE99-D1D4-406A-84DC-011BADDC8A50}"
+	ProjectSection(ProjectDependencies) = postProject
+		{063B026F-AD45-4EC2-92E8-490A10AC8558} = {063B026F-AD45-4EC2-92E8-490A10AC8558}
+		{35A4AA1A-0511-4653-B70C-32DEF569E050} = {35A4AA1A-0511-4653-B70C-32DEF569E050}
+		{71D95FDE-700D-4AAC-829C-B1FC8AD4D4D1} = {71D95FDE-700D-4AAC-829C-B1FC8AD4D4D1}
+		{C87693A4-C556-4A6F-B608-699CFF27312C} = {C87693A4-C556-4A6F-B608-699CFF27312C}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationApiUygulamasi.BLL", "ReservationApiUygulamasi.BLL\ReservationApiUygulamasi.BLL.csproj", "{3B5399B9-096E-4512-A883-853DEC2CE7C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationApiUygulamasi.WebApi", "ReservationApiUygulamasi.WebApi\ReservationApiUygulamasi.WebApi.csproj", "{35A4AA1A-0511-4653-B70C-32DEF569E050}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationApiUygulamasi.DAL", "ReservationApiUygulamasi.DAL\ReservationApiUygulamasi.DAL.csproj", "{10CAB1BD-B82D-4CCD-BF95-0D8A10703CCD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationApiUygulamasi.EL", "ReservationApiUygulamasi.EL\ReservationApiUygulamasi.EL.csproj", "{C87693A4-C556-4A6F-B608-699CFF27312C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationApiUygulamasi.EL", "ReservationApiUygulamasi.EL\ReservationApiUygulamasi.EL.csproj", "{01AADFC7-004A-4AD3-A0E6-A0C5604F63FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationApiUygulamasi.BLL", "ReservationApiUygulamasi.BLL\ReservationApiUygulamasi.BLL.csproj", "{063B026F-AD45-4EC2-92E8-490A10AC8558}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationApiUygulamasi.DAL", "ReservationApiUygulamasi.DAL\ReservationApiUygulamasi.DAL.csproj", "{71D95FDE-700D-4AAC-829C-B1FC8AD4D4D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +29,22 @@ Global
 		{4E5ADE99-D1D4-406A-84DC-011BADDC8A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E5ADE99-D1D4-406A-84DC-011BADDC8A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E5ADE99-D1D4-406A-84DC-011BADDC8A50}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B5399B9-096E-4512-A883-853DEC2CE7C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B5399B9-096E-4512-A883-853DEC2CE7C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B5399B9-096E-4512-A883-853DEC2CE7C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B5399B9-096E-4512-A883-853DEC2CE7C0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10CAB1BD-B82D-4CCD-BF95-0D8A10703CCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10CAB1BD-B82D-4CCD-BF95-0D8A10703CCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10CAB1BD-B82D-4CCD-BF95-0D8A10703CCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10CAB1BD-B82D-4CCD-BF95-0D8A10703CCD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01AADFC7-004A-4AD3-A0E6-A0C5604F63FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01AADFC7-004A-4AD3-A0E6-A0C5604F63FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01AADFC7-004A-4AD3-A0E6-A0C5604F63FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01AADFC7-004A-4AD3-A0E6-A0C5604F63FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35A4AA1A-0511-4653-B70C-32DEF569E050}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35A4AA1A-0511-4653-B70C-32DEF569E050}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35A4AA1A-0511-4653-B70C-32DEF569E050}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35A4AA1A-0511-4653-B70C-32DEF569E050}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C87693A4-C556-4A6F-B608-699CFF27312C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C87693A4-C556-4A6F-B608-699CFF27312C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C87693A4-C556-4A6F-B608-699CFF27312C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C87693A4-C556-4A6F-B608-699CFF27312C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{063B026F-AD45-4EC2-92E8-490A10AC8558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{063B026F-AD45-4EC2-92E8-490A10AC8558}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{063B026F-AD45-4EC2-92E8-490A10AC8558}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{063B026F-AD45-4EC2-92E8-490A10AC8558}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71D95FDE-700D-4AAC-829C-B1FC8AD4D4D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71D95FDE-700D-4AAC-829C-B1FC8AD4D4D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71D95FDE-700D-4AAC-829C-B1FC8AD4D4D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71D95FDE-700D-4AAC-829C-B1FC8AD4D4D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
