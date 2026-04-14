@@ -18,10 +18,12 @@ namespace ReservationApiUygulamasi.WebApi.Context
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ReservationDto>().HasKey(x => x.Id); //Tablonun primary key'ini YAZ !
+			modelBuilder.Entity<ReservationDto>().HasKey(x => x.Id); //Tablonun primary key'ini YAZ !
             modelBuilder.Entity<ProductDto>().HasKey(x => x.Id); //Eğer Id ise yazmaya gerek yok ama eğer ProductID gibi farklı bir prımarykey olsaydı KESINLIKKLE BELİRTİLMELi !
 			modelBuilder.Entity<UserDto>().HasKey(x => x.ID);
             modelBuilder.Entity<Log>().HasKey(x => x.Id);
+
+			modelBuilder.Entity<ReservationDto>().Property(x => x.ReservedQty).HasPrecision(18, 2); //Burada Decimal kac sayıdan olusması belırtlmeli ! 
 		}
-    }
+	}
 }
