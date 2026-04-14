@@ -12,13 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApiContext>();
 
 // VALIDATOR calýsmasý icin eklendi .
-builder.Services.AddScoped<IValidator<ReservationDto>,ReservationValidator>();
+  // - eski  //builder.Services.AddScoped<IValidator<ReservationDto>,ReservationValidator>();
+   builder.Services.AddScoped<IValidator<CreateReservationDto>, ReservationValidator>();
 // Add services to the container.
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-// --builder.Services.AddSwaggerGen(); bunun yerýne Authroýze ýcýn alttdaki kod Eklendi
 
+// --builder.Services.AddSwaggerGen(); bunun yerýne Authroýze ýcýn alttdaki kod Eklendi
 //AddSwaggerGen()
 #region AddSwaggerGen için Authorize butonu eklemek için gerekli kodlar
 	builder.Services.AddSwaggerGen(options =>

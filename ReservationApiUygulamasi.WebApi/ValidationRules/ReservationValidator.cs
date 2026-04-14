@@ -3,7 +3,7 @@ using ReservationApiUygulamasi.EL.ApiModels;
 
 namespace ReservationApiUygulamasi.WebApi.ValidationRules
 {
-	public class ReservationValidator : AbstractValidator<ReservationDto>
+	public class ReservationValidator : AbstractValidator<CreateReservationDto>
 	{
 		public ReservationValidator()
 		{

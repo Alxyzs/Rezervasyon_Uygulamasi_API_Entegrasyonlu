@@ -8,10 +8,14 @@ namespace ReservationApiUygulamasi.EL.ApiModels
 {
 	public class ProductDto
 	{
-		public int Id { get; set; }
+		public int? Id { get; set; }
 		public string? ProductCode { get; set; }
 		public string? ProductName { get; set; }
 		public double StockQuantity { get; set; }
-		public int WhNumber { get; set; }
+		public string? UnitCode { get; set; }
+		public int? UnitRef { get; set; }
+		public string? WhName { get; set; }
+		public Int16? WhNumber { get; set; }
+
 	}
 }

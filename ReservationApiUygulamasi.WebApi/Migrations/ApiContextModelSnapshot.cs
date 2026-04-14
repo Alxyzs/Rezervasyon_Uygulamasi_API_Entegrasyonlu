@@ -53,7 +53,7 @@ namespace ReservationApiUygulamasi.WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReservationDto");
+                    b.ToTable("ReservationDto", (string)null);
                 });
 #pragma warning restore 612, 618
         }
