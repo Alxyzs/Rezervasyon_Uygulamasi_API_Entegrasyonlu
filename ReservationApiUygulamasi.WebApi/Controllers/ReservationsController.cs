@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReservationApiUygulamasi.EL.ApiModels;
 using ReservationApiUygulamasi.WebApi.Context;
+using ReservationApiUygulamasi.WebApi.Hubs;
 
 namespace ReservationApiUygulamasi.WebApi.Controllers
 {
@@ -16,12 +17,16 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 
 		private readonly ApiContext _context;
 		private readonly IValidator<CreateReservationDto> _validator; //BuFludentValidation içindir kuralları kontrol eder sadece .
+		private readonly StockHubTransmitter _transMitter; //Bu ise SignalR ile YENI REZERVASYON EKLEDİndi ve stok azalır buyuzden stok güncellemelerini bildirmek için kullanılır yani MESAJ,BİLDİRİM İÇİN Ctor'da belirtilmeli .Kullanılacak yerdede enjekte edilip kullanılır ASağda örnek POST'da.
 
-		public ReservationsController(IValidator<CreateReservationDto> validator, ApiContext context)
+
+		public ReservationsController(IValidator<CreateReservationDto> validator, ApiContext context, StockHubTransmitter transMitter)
 		{
 			_validator = validator;
 			_context = context;
+			_transMitter = transMitter;
 		}
+
 
 		[HttpGet]
 		public async Task<ActionResult<List<ReservationDto>>> GetAll()
@@ -37,8 +42,10 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 				Success = true,
 				Message = "Rezervasyonlar listelendi",
 				Data = values
+				//Data = new DataResponse<List<ReservationDto>> { Data = values } //Bu yapıda {}parantez icinde gosterme mantığı iste .
 			});//Bu Yapı ise Tam Response Yapsını ve ApiResponse sınıfı ise standart bir API cevabı yapısıdır . Success Message ve Data gibi alanları içerir | APIden dönen cevabın tutarlı ve anlaşılır olmasını sağlar.
 		}
+
 
 
 		[HttpPost] //Diğerinden Farklı Olarak ROWVERSİON GONDERMEDEN POST İŞLEMI YAPMAK İÇİN AYRI BİR DTO OLUŞTURDUM . 
@@ -60,11 +67,22 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 				DATE = DateTime.UtcNow
 			};
 
-			await _context.ReservationDto.AddAsync(entity); // ✔ DOĞRU
+			await _context.ReservationDto.AddAsync(entity); 
 			await _context.SaveChangesAsync();
+
+			//Burada SignalR ile Stok bildirimi gönderilir . Stok güncellendiğinde tüm bağlı istemcilere bildirim gönderilir ve stok durumunu güncellemeleri sağlanır 
+			await _transMitter.UpdateStocksAsync(new
+			{
+				Message = "Udpdate Stocks . Refresh Page ",
+				UpdateAt = DateTime.UtcNow,
+				Product = dto.ProductRef,
+				Quantity = dto.ReservedQty
+			});
 
 			return Ok("Rezervasyon eklendi");
 		}
+
+
 		//#region EskiPostMethodu RowVersion Kalktı onun için yeni sınıf olusutruldu
 		//[HttpPost]
 		//public async Task<IActionResult> Create([FromBody] ReservationDto dto)
@@ -94,6 +112,8 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 		//}
 		//#endregion
 
+
+
 		[HttpGet("{Id}")]//ID'ye göre arama
 		public async Task<ActionResult<ReservationDto>> GetById(int Id)
 		{
@@ -107,6 +127,8 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 
 			return Ok(reservation);
 		}
+
+
 
 		[HttpDelete("{Id}")]
 		public async Task<IActionResult> DeleteProduct(int Id)
@@ -122,6 +144,47 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			return Ok("Rezervasyon silindi");
 		}
 
+
+		
+		//UPDATE İÇİN
+		[HttpPut]
+		public async Task<IActionResult> Update([FromBody] UpdateReservationDto dto)
+		{
+			var entity = await _context.ReservationDto.FirstOrDefaultAsync(x => x.Id == dto.Id);
+
+			if (entity == null)
+				return NotFound();
+
+			if (string.IsNullOrEmpty(dto.RowVersion))
+				return BadRequest("RowVersion zorunludur.");
+
+			byte[] rowVersionBytes;
+			try
+			{
+				rowVersionBytes = Convert.FromBase64String(dto.RowVersion);
+			}
+			catch
+			{
+				return BadRequest("RowVersion geçersiz format.");
+			}
+
+			_context.Entry(entity).OriginalValues["RowVersion"] = rowVersionBytes;
+
+			entity.ProductRef = dto.ProductRef;
+			entity.ReservedQty = dto.ReservedQty;
+			entity.Notes = dto.Notes;
+			entity.UserID = dto.UserID;
+
+			try
+			{
+				await _context.SaveChangesAsync();
+				return Ok("Güncellendi");
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				return Conflict("Başka biri güncelledi");
+			}
+		}
 
 	}
 }

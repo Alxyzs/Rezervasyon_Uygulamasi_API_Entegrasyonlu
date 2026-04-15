@@ -11,5 +11,12 @@ namespace ReservationApiUygulamasi.EL.ApiModels
 		public bool Success { get; set; }
 		public string? Message { get; set; }
 		public T? Data { get; set; }
+
+		//public DataResponse<T>? Data { get; set; }
 	}
+
+	//public class DataResponse<T> {} Parantez icinde gostermek icin Reservation bilgilerini .
+	//{
+	//	public T? Data { get; set; }
+	//}
 }
