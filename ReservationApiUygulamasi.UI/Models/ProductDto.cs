@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 public class ProductDto
 {
@@ -13,6 +14,19 @@ public class ProductDto
 
     [JsonProperty("stockQuantity")]
     public double StockQuantity { get; set; }
+
+    [JsonProperty("unitCode")]
+    public string unitCode { get; set; }
+
+    [JsonProperty("unitRef")]
+    public int? unitRef { get; set; }   
+    
+    [JsonProperty("whName")]
+    public string whName { get; set; }   
+    
+    [JsonProperty("whNumber")]
+    public int whNumber { get; set; }
+
 
     [JsonProperty("stockStatus")]
     public string StockStatus { get; set; }

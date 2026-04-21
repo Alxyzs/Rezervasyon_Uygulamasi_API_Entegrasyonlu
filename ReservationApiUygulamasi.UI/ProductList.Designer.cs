@@ -152,13 +152,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.SkyBlue;
             this.ClientSize = new System.Drawing.Size(799, 447);
+            this.Controls.Add(this.dgv_Data);
             this.Controls.Add(this.btnGoBack);
             this.Controls.Add(this.lnlNot);
             this.Controls.Add(this.txtNotes);
             this.Controls.Add(this.txtstockQuantity);
             this.Controls.Add(this.txtproductRef);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.dgv_Data);
             this.Controls.Add(this.txtSearch);
             this.Controls.Add(this.btnReserveSelected);
             this.Name = "ProductList";
