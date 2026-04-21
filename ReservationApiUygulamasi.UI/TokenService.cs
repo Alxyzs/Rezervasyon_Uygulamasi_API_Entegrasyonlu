@@ -90,7 +90,7 @@ namespace ReservationApiUygulamasi.UI
 
         public class TokenResponse
         {
-            [JsonProperty("token")]
+            [JsonProperty("data")]
             public string Token { get; set; }
 
             [JsonProperty("userId")]

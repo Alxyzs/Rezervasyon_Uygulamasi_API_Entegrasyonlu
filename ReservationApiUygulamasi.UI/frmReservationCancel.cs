@@ -1,4 +1,5 @@
-﻿using ReservationApiUygulamasi.UI.Models;
+﻿using Newtonsoft.Json;
+using ReservationApiUygulamasi.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,7 +22,8 @@ namespace ReservationApiUygulamasi.UI
             await LoadUserReservationsAsync();
             dvgCurrentReservationCancel.Columns["Id"].Visible = false;
             dvgCurrentReservationCancel.Columns["userID"].Visible = false;
-
+            dvgCurrentReservationCancel.Columns["rowVersion"].Visible = false;
+            dvgCurrentReservationCancel.Columns["productRef"].Visible = false;
         }
 
         private HttpClientHandler GetSSL()
@@ -40,6 +42,15 @@ namespace ReservationApiUygulamasi.UI
             {
                 int currentUserId = CurrentUser.UserID;
 
+                if (currentUserId <= 0)
+                {
+                    MessageBox.Show("Geçerli kullanıcı bilgisi bulunamadı.");
+                    Login frm = new Login();
+                    this.Hide();
+                    frm.Show();
+                    return;
+                }
+
                 using (HttpClient httpClient = new HttpClient())
                 {
                     var apiSettings = ConfigurationHelper.LoadApiSettings();
@@ -52,13 +63,22 @@ namespace ReservationApiUygulamasi.UI
                     response.EnsureSuccessStatusCode();
 
                     string responseString = await response.Content.ReadAsStringAsync();
-                    var allReservations = Newtonsoft.Json.JsonConvert.DeserializeObject<List<dynamic>>(responseString);
 
-                    _originalReservations = allReservations
-                        .Where(r => r.userID != null && Convert.ToInt32(r.userID) == currentUserId)
+                    var result = JsonConvert.DeserializeObject<ApiResponse<Reservation>>(responseString);
+
+                    if (result == null || !result.success)
+                    {
+                        MessageBox.Show("API'den veri alınamadı: " + result?.message);
+                        return;
+                    }
+
+                    var allReservations = result.data;
+
+                    var filteredReservations = allReservations
+                        .Where(r => r.userID == currentUserId)
                         .ToList();
 
-                    dvgCurrentReservationCancel.DataSource = new BindingList<dynamic>(_originalReservations);
+                    dvgCurrentReservationCancel.DataSource = new BindingList<Reservation>(filteredReservations);
                 }
             }
             catch (Exception ex)

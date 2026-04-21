@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Drawing;
+using Microsoft.AspNetCore.SignalR.Client;
 
 
 namespace ReservationApiUygulamasi.UI
@@ -23,6 +24,8 @@ namespace ReservationApiUygulamasi.UI
             InitializeComponent();
             InitializeHttpClient();
         }
+
+        HubConnection connection;
 
         private void InitializeHttpClient()
         {
@@ -42,8 +45,7 @@ namespace ReservationApiUygulamasi.UI
             var token = ConfigurationHelper.LoadAppSettings().Token;
             if (!string.IsNullOrWhiteSpace(token))
             {
-                _client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             }
         }
         private HttpClientHandler GetSSL()
@@ -56,8 +58,39 @@ namespace ReservationApiUygulamasi.UI
 
         private async void ProductList_Load(object sender, EventArgs e)
         {
+
+            var apiSettings = ConfigurationHelper.LoadApiSettings();
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (m, c, ch, sslErrors) => true
+            };
+
+            _client = new HttpClient(handler)
+            {
+                BaseAddress = new Uri(apiSettings.BaseUrl),
+                Timeout = TimeSpan.FromSeconds(apiSettings.Timeout) 
+            };
+
+            connection = new HubConnectionBuilder().WithUrl(new Uri(_client.BaseAddress, "stockHubs")).WithAutomaticReconnect().Build();
+            //connection = new HubConnectionBuilder().WithUrl("http://192.168.1.90:5003/stockHubs").WithAutomaticReconnect().Build();
+
+            connection.On<StockUpdateDto>("UpdateStocks", (data) =>
+            {
+                Invoke((MethodInvoker)async delegate
+                {
+                    MessageBox.Show(data.Message);
+                    await LoadProductsFromApi();
+                });
+            });
+
+            await connection.StartAsync();
+            //SignalR Hub
+
             await LoadProductsFromApi();
+
             dgv_Data.Columns["id"].Visible = false;
+            dgv_Data.Columns["unitRef"].Visible = false;
+            dgv_Data.Columns["whNumber"].Visible = false;
         }
 
         private async Task LoadProductsFromApi()
@@ -160,6 +193,7 @@ namespace ReservationApiUygulamasi.UI
             bool success = await SendReservationToApi(UserID, MalzemKodu, Notes, miktar);
             MessageBox.Show(success ? "Rezervasyon alınmıştır." : "Rezervasyon gönderilemedi.");
         }
+
         void AuthorizeOtomatik()
         {
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ConfigurationHelper.LoadAppSettings().Token);
@@ -183,6 +217,7 @@ namespace ReservationApiUygulamasi.UI
 
             try
             {
+                AuthorizeOtomatik();
                 var response = await _client.PostAsync("api/Reservations", content);
 
                 if (!response.IsSuccessStatusCode)
@@ -195,8 +230,7 @@ namespace ReservationApiUygulamasi.UI
 
                         if (errors != null && errors.Any())
                         {
-                            var allErrors = string.Join(Environment.NewLine,
-                                errors.SelectMany(e => e.Value.Select(msg => $"{e.Key}: {msg}")));
+                            var allErrors = string.Join(Environment.NewLine , errors.SelectMany(e => e.Value.Select(msg => $"{e.Key}: {msg}")));
 
                             MessageBox.Show(allErrors, "Validation Errors", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }

@@ -1,4 +1,5 @@
-﻿using ReservationApiUygulamasi.UI.Models;
+﻿using Newtonsoft.Json;
+using ReservationApiUygulamasi.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,9 +15,11 @@ namespace ReservationApiUygulamasi.UI
     {
         private async void FrmSelection_Load(object sender, EventArgs e)
         {
-            await LoadUserReservationsAsync();
+             await LoadUserReservationsAsync();
             dvgCurrentReservations.Columns["Id"].Visible = false;
             dvgCurrentReservations.Columns["userID"].Visible = false;
+            dvgCurrentReservations.Columns["rowVersion"].Visible = false;
+            dvgCurrentReservations.Columns["productRef"].Visible = false;
         }
         private async Task LoadUserReservationsAsync()
         {
@@ -38,18 +41,30 @@ namespace ReservationApiUygulamasi.UI
                     var apiSettings = ConfigurationHelper.LoadApiSettings();
                     httpClient.BaseAddress = new Uri(apiSettings.BaseUrl);
                     httpClient.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
-                    httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ConfigurationHelper.GetToken());
+                    httpClient.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ConfigurationHelper.GetToken());
 
                     HttpResponseMessage response = await httpClient.GetAsync("api/Reservations");
                     response.EnsureSuccessStatusCode();
 
                     string responseString = await response.Content.ReadAsStringAsync();
-                    var allReservations = Newtonsoft.Json.JsonConvert.DeserializeObject<List<dynamic>>(responseString);
 
-                    var filteredReservations = allReservations.Where(r => r.userID != null && Convert.ToInt32(r.userID) == currentUserId).ToList();
+                    var result = JsonConvert.DeserializeObject<ApiResponse<Reservation>>(responseString);
 
+                    if (result == null || !result.success)
+                    {
+                        MessageBox.Show("API'den veri alınamadı: " + result?.message);
+                        return;
+                    }
 
-                    dvgCurrentReservations.DataSource = new BindingList<dynamic>(filteredReservations);
+                    var allReservations = result.data;
+
+                    var filteredReservations = allReservations
+                        .Where(r => r.userID == currentUserId)
+                        .ToList();
+
+                    dvgCurrentReservations.DataSource =
+                        new BindingList<Reservation>(filteredReservations);
                 }
             }
             catch (Exception ex)
@@ -57,7 +72,6 @@ namespace ReservationApiUygulamasi.UI
                 MessageBox.Show("Rezervasyonlar alınamadı: " + ex.Message);
             }
         }
-
 
 
 
