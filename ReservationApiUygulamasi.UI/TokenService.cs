@@ -21,7 +21,7 @@ namespace ReservationApiUygulamasi.UI
         }
         public async Task<string> GetTokenAsync(string username, string password)
         {
-            if (!string.IsNullOrEmpty(_token) && _expireDate > DateTime.UtcNow)return _token;
+            if (!string.IsNullOrEmpty(_token) && _expireDate > DateTime.UtcNow) return _token;
 
             string requestUri = "api/Auth";
 
@@ -60,7 +60,7 @@ namespace ReservationApiUygulamasi.UI
                     }
                 }
                 catch
-                {}
+                { }
             }
             if (!string.IsNullOrWhiteSpace(responseString))
             {
@@ -80,28 +80,26 @@ namespace ReservationApiUygulamasi.UI
                     }
                 }
                 catch
-                {}
+                { }
 
                 return _token;
             }
 
             throw new Exception("Token alınamadı. Gelen veri:\n" + responseString);
         }
-
         public class TokenResponse
         {
-            [JsonProperty("token")]
+            [JsonProperty("success")]
+            public bool Success { get; set; }
+
+            [JsonProperty("message")]
+            public string Message { get; set; }
+
+            [JsonProperty("data")]
             public string Token { get; set; }
 
-<<<<<<< Updated upstream
             [JsonProperty("userId")]
             public int UserId { get; set; }
         }
     }
-=======
-			[JsonProperty("userId")]
-			public int UserId { get; set; }
-		}
-	}
->>>>>>> Stashed changes
 }
