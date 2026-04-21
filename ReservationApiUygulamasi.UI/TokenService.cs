@@ -87,18 +87,10 @@ namespace ReservationApiUygulamasi.UI
 
 			throw new Exception("Token alınamadı. Gelen veri:\n" + responseString);
 		}
-
-<<<<<<< HEAD
-        public class TokenResponse
-        {
-            [JsonProperty("data")]
-            public string Token { get; set; }
-=======
 		public class TokenResponse
 		{
 			[JsonProperty("success")]
 			public bool Success { get; set; }
->>>>>>> 18818792ff8b6fa7a085e32cf39c078036578c57
 
 			[JsonProperty("message")]
 			public string Message { get; set; }
