@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReservationApiUygulamasi.BLL
+namespace ReservationApiUygulamasi.EL.QueryModels
 {
-	internal class Program
+	public static class InstantUser
 	{
-		static void Main(string[] args)
-		{
-		}
+		public static int UserID { get; set; }
 	}
 }

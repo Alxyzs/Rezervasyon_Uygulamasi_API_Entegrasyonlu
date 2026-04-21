@@ -77,8 +77,6 @@ namespace ReservationApiUygulamasi.UI
                                 var currentUser = users.FirstOrDefault(u => string.Equals(u.username, txtUsername.Text, StringComparison.Ordinal) && string.Equals(u.password, txtPassword.Text, StringComparison.Ordinal));
 
 
-
-
                                 if (currentUser != null)
                                 {
                                     CurrentUser.UserID = currentUser.ID;
