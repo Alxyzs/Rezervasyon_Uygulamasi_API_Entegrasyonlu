@@ -93,8 +93,15 @@ namespace ReservationApiUygulamasi.UI
             [JsonProperty("token")]
             public string Token { get; set; }
 
+<<<<<<< Updated upstream
             [JsonProperty("userId")]
             public int UserId { get; set; }
         }
     }
+=======
+			[JsonProperty("userId")]
+			public int UserId { get; set; }
+		}
+	}
+>>>>>>> Stashed changes
 }
