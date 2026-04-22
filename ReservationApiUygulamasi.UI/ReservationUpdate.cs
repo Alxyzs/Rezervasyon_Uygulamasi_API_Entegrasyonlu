@@ -10,16 +10,22 @@ using System.Windows.Forms;
 
 namespace ReservationApiUygulamasi.UI
 {
-    public partial class FrmSelection : Form
+    public partial class ReservationUpdate : Form
     {
-        private async void FrmSelection_Load(object sender, EventArgs e)
+        public ReservationUpdate()
         {
-             await LoadUserReservationsAsync();
+            InitializeComponent();
+        }
+
+        private async void ReservationUpdate_Load(object sender, EventArgs e)
+        {
+            await LoadUserReservationsAsync();
             dvgCurrentReservations.Columns["Id"].Visible = false;
             dvgCurrentReservations.Columns["userID"].Visible = false;
             dvgCurrentReservations.Columns["rowVersion"].Visible = false;
             dvgCurrentReservations.Columns["productRef"].Visible = false;
         }
+
         private async Task LoadUserReservationsAsync()
         {
             try
@@ -72,58 +78,9 @@ namespace ReservationApiUygulamasi.UI
             }
         }
 
-        public FrmSelection()
+        private void btnGoBack_Click(object sender, EventArgs e)
         {
-            InitializeComponent();
-        }
-
-        private void btnGetReservation_Click(object sender, EventArgs e)
-        {
-            ProductList frm = new ProductList();
-            frm.Show();
-            this.Hide();
-        }
-
-        private void btnRemoveReservation_Click(object sender, EventArgs e)
-        {
-            frmReservationCancel frm = new frmReservationCancel();
-            frm.Show();
-            this.Hide();
-        }
-
-        private void btnExit_Click(object sender, EventArgs e)
-        {
-            Login frm = new Login();
-            frm.Show();
-            this.Hide();
-        }
-
-        private void FrmSelection_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.UserClosing) 
-            {
-                var result = MessageBox.Show
-                (
-                    "Uygulamadan çıkmak istediğinizden emin misiniz?",
-                    "Çıkış Onayı",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
-                );
-
-                if (result == DialogResult.No)
-                {
-                    e.Cancel = true;
-                }
-                else
-                {
-                    Application.Exit();
-                }
-            }
-        }
-
-        private void btnReservationUpdate_Click(object sender, EventArgs e)
-        {
-            ReservationUpdate frm = new ReservationUpdate();
+            FrmSelection frm = new FrmSelection();
             frm.Show();
             this.Hide();
         }

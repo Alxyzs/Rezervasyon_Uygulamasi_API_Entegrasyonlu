@@ -33,6 +33,7 @@
             this.dvgCurrentReservations = new System.Windows.Forms.DataGridView();
             this.lblCurrentReservations = new System.Windows.Forms.Label();
             this.btnExit = new System.Windows.Forms.Button();
+            this.btnReservationUpdate = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dvgCurrentReservations)).BeginInit();
             this.SuspendLayout();
             // 
@@ -42,7 +43,7 @@
             this.btnGetReservation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGetReservation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.btnGetReservation.ForeColor = System.Drawing.Color.White;
-            this.btnGetReservation.Location = new System.Drawing.Point(363, 368);
+            this.btnGetReservation.Location = new System.Drawing.Point(62, 387);
             this.btnGetReservation.Name = "btnGetReservation";
             this.btnGetReservation.Size = new System.Drawing.Size(333, 74);
             this.btnGetReservation.TabIndex = 0;
@@ -56,7 +57,7 @@
             this.btnRemoveReservation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRemoveReservation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.btnRemoveReservation.ForeColor = System.Drawing.Color.White;
-            this.btnRemoveReservation.Location = new System.Drawing.Point(363, 448);
+            this.btnRemoveReservation.Location = new System.Drawing.Point(740, 387);
             this.btnRemoveReservation.Name = "btnRemoveReservation";
             this.btnRemoveReservation.Size = new System.Drawing.Size(333, 74);
             this.btnRemoveReservation.TabIndex = 1;
@@ -72,7 +73,7 @@
             this.dvgCurrentReservations.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.dvgCurrentReservations.BackgroundColor = System.Drawing.Color.BlanchedAlmond;
             this.dvgCurrentReservations.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dvgCurrentReservations.Location = new System.Drawing.Point(62, 42);
+            this.dvgCurrentReservations.Location = new System.Drawing.Point(98, 55);
             this.dvgCurrentReservations.Name = "dvgCurrentReservations";
             this.dvgCurrentReservations.ReadOnly = true;
             this.dvgCurrentReservations.Size = new System.Drawing.Size(926, 307);
@@ -83,7 +84,7 @@
             this.lblCurrentReservations.AutoSize = true;
             this.lblCurrentReservations.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.lblCurrentReservations.ForeColor = System.Drawing.Color.White;
-            this.lblCurrentReservations.Location = new System.Drawing.Point(358, 9);
+            this.lblCurrentReservations.Location = new System.Drawing.Point(396, 9);
             this.lblCurrentReservations.Name = "lblCurrentReservations";
             this.lblCurrentReservations.Size = new System.Drawing.Size(338, 26);
             this.lblCurrentReservations.TabIndex = 3;
@@ -95,7 +96,7 @@
             this.btnExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.btnExit.ForeColor = System.Drawing.Color.White;
-            this.btnExit.Location = new System.Drawing.Point(12, 463);
+            this.btnExit.Location = new System.Drawing.Point(492, 482);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(159, 58);
             this.btnExit.TabIndex = 9;
@@ -103,12 +104,27 @@
             this.btnExit.UseVisualStyleBackColor = false;
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
+            // btnReservationUpdate
+            // 
+            this.btnReservationUpdate.BackColor = System.Drawing.Color.Turquoise;
+            this.btnReservationUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReservationUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnReservationUpdate.ForeColor = System.Drawing.Color.White;
+            this.btnReservationUpdate.Location = new System.Drawing.Point(401, 387);
+            this.btnReservationUpdate.Name = "btnReservationUpdate";
+            this.btnReservationUpdate.Size = new System.Drawing.Size(333, 74);
+            this.btnReservationUpdate.TabIndex = 10;
+            this.btnReservationUpdate.Text = "REZERVASYON GÜNCELLE";
+            this.btnReservationUpdate.UseVisualStyleBackColor = false;
+            this.btnReservationUpdate.Click += new System.EventHandler(this.btnReservationUpdate_Click);
+            // 
             // FrmSelection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.ClientSize = new System.Drawing.Size(1068, 533);
+            this.ClientSize = new System.Drawing.Size(1136, 552);
+            this.Controls.Add(this.btnReservationUpdate);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.lblCurrentReservations);
             this.Controls.Add(this.dvgCurrentReservations);
@@ -131,5 +147,6 @@
         private System.Windows.Forms.DataGridView dvgCurrentReservations;
         private System.Windows.Forms.Label lblCurrentReservations;
         private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.Button btnReservationUpdate;
     }
 }
