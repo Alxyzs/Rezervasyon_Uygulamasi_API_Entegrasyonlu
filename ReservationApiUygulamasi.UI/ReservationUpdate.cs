@@ -84,5 +84,38 @@ namespace ReservationApiUygulamasi.UI
             frm.Show();
             this.Hide();
         }
+
+        private void btnUpdateReservation_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dvgCurrentReservations.CurrentRow == null)
+                {
+                    MessageBox.Show("Lütfen Güncellenecek Malzeme Seçiniz...");
+                    return;
+                }
+
+                int UserID = CurrentUser.UserID;
+                var selectedProduct = (ProductDto)dvgCurrentReservations.CurrentRow.DataBoundItem;
+                int MalzemKodu = Convert.ToInt32(txtproductRef.Text);
+                string Notes = txtNotes.Text;
+                double miktar = selectedProduct.StockQuantity;
+
+            }
+            catch { }
+
+        }
+
+        private void dvgCurrentReservations_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dvgCurrentReservations.Rows[e.RowIndex];
+
+                txtUrunAdi.Text = row.Cells["KitapId"].Value?.ToString() ?? "";
+                txtUrunNumarasi.Text = row.Cells["Ad"].Value?.ToString() ?? "";
+                //devamı gelecek...
+            }
+        }
     }
 }

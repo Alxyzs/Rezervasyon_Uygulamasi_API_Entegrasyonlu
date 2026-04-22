@@ -31,17 +31,19 @@
             this.dvgCurrentReservations = new System.Windows.Forms.DataGridView();
             this.lblCurrentReservations = new System.Windows.Forms.Label();
             this.btnGoBack = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtUrunAdi = new System.Windows.Forms.TextBox();
             this.lblUsername = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.txtUrunNumarasi = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.textBox6 = new System.Windows.Forms.TextBox();
             this.btnUpdateReservation = new System.Windows.Forms.Button();
+            this.txtproductRef = new System.Windows.Forms.TextBox();
+            this.txtstockQuantity = new System.Windows.Forms.TextBox();
+            this.txtNotes = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dvgCurrentReservations)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,6 +60,7 @@
             this.dvgCurrentReservations.ReadOnly = true;
             this.dvgCurrentReservations.Size = new System.Drawing.Size(620, 343);
             this.dvgCurrentReservations.TabIndex = 3;
+            this.dvgCurrentReservations.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dvgCurrentReservations_CellClick);
             // 
             // lblCurrentReservations
             // 
@@ -84,12 +87,12 @@
             this.btnGoBack.UseVisualStyleBackColor = false;
             this.btnGoBack.Click += new System.EventHandler(this.btnGoBack_Click);
             // 
-            // textBox1
+            // txtUrunAdi
             // 
-            this.textBox1.Location = new System.Drawing.Point(751, 78);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(256, 20);
-            this.textBox1.TabIndex = 10;
+            this.txtUrunAdi.Location = new System.Drawing.Point(751, 78);
+            this.txtUrunAdi.Name = "txtUrunAdi";
+            this.txtUrunAdi.Size = new System.Drawing.Size(256, 20);
+            this.txtUrunAdi.TabIndex = 10;
             // 
             // lblUsername
             // 
@@ -113,12 +116,12 @@
             this.label1.TabIndex = 19;
             this.label1.Text = "Ürün Numarası:";
             // 
-            // textBox2
+            // txtUrunNumarasi
             // 
-            this.textBox2.Location = new System.Drawing.Point(751, 135);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(256, 20);
-            this.textBox2.TabIndex = 18;
+            this.txtUrunNumarasi.Location = new System.Drawing.Point(751, 135);
+            this.txtUrunNumarasi.Name = "txtUrunNumarasi";
+            this.txtUrunNumarasi.Size = new System.Drawing.Size(256, 20);
+            this.txtUrunNumarasi.TabIndex = 18;
             // 
             // label2
             // 
@@ -161,18 +164,11 @@
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(837, 285);
+            this.label5.Location = new System.Drawing.Point(860, 285);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(76, 17);
+            this.label5.Size = new System.Drawing.Size(38, 17);
             this.label5.TabIndex = 25;
-            this.label5.Text = "Ürün Adı:";
-            // 
-            // textBox6
-            // 
-            this.textBox6.Location = new System.Drawing.Point(751, 305);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(256, 20);
-            this.textBox6.TabIndex = 24;
+            this.label5.Text = "Not:";
             // 
             // btnUpdateReservation
             // 
@@ -184,12 +180,39 @@
             this.btnUpdateReservation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUpdateReservation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.btnUpdateReservation.ForeColor = System.Drawing.Color.White;
-            this.btnUpdateReservation.Location = new System.Drawing.Point(709, 348);
+            this.btnUpdateReservation.Location = new System.Drawing.Point(714, 419);
             this.btnUpdateReservation.Name = "btnUpdateReservation";
             this.btnUpdateReservation.Size = new System.Drawing.Size(332, 42);
             this.btnUpdateReservation.TabIndex = 26;
             this.btnUpdateReservation.Text = "Güncelle";
             this.btnUpdateReservation.UseVisualStyleBackColor = false;
+            this.btnUpdateReservation.Click += new System.EventHandler(this.btnUpdateReservation_Click);
+            // 
+            // txtproductRef
+            // 
+            this.txtproductRef.Cursor = System.Windows.Forms.Cursors.Default;
+            this.txtproductRef.Location = new System.Drawing.Point(12, 396);
+            this.txtproductRef.Name = "txtproductRef";
+            this.txtproductRef.Size = new System.Drawing.Size(100, 20);
+            this.txtproductRef.TabIndex = 27;
+            this.txtproductRef.Visible = false;
+            // 
+            // txtstockQuantity
+            // 
+            this.txtstockQuantity.Cursor = System.Windows.Forms.Cursors.Default;
+            this.txtstockQuantity.Location = new System.Drawing.Point(127, 396);
+            this.txtstockQuantity.Name = "txtstockQuantity";
+            this.txtstockQuantity.Size = new System.Drawing.Size(100, 20);
+            this.txtstockQuantity.TabIndex = 28;
+            this.txtstockQuantity.Visible = false;
+            // 
+            // txtNotes
+            // 
+            this.txtNotes.Location = new System.Drawing.Point(751, 305);
+            this.txtNotes.Name = "txtNotes";
+            this.txtNotes.Size = new System.Drawing.Size(256, 85);
+            this.txtNotes.TabIndex = 29;
+            this.txtNotes.Text = "";
             // 
             // ReservationUpdate
             // 
@@ -197,17 +220,19 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightSkyBlue;
             this.ClientSize = new System.Drawing.Size(1081, 505);
+            this.Controls.Add(this.txtNotes);
+            this.Controls.Add(this.txtstockQuantity);
+            this.Controls.Add(this.txtproductRef);
             this.Controls.Add(this.btnUpdateReservation);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.textBox6);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.textBox4);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.txtUrunNumarasi);
             this.Controls.Add(this.lblUsername);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtUrunAdi);
             this.Controls.Add(this.btnGoBack);
             this.Controls.Add(this.lblCurrentReservations);
             this.Controls.Add(this.dvgCurrentReservations);
@@ -225,16 +250,18 @@
         private System.Windows.Forms.DataGridView dvgCurrentReservations;
         private System.Windows.Forms.Label lblCurrentReservations;
         private System.Windows.Forms.Button btnGoBack;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtUrunAdi;
         private System.Windows.Forms.Label lblUsername;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox txtUrunNumarasi;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.Button btnUpdateReservation;
+        private System.Windows.Forms.TextBox txtproductRef;
+        private System.Windows.Forms.TextBox txtstockQuantity;
+        private System.Windows.Forms.RichTextBox txtNotes;
     }
 }
