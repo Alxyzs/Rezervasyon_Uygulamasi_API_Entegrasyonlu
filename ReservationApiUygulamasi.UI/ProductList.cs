@@ -127,8 +127,13 @@ namespace ReservationApiUygulamasi.UI
                             {
                                 int stock = Convert.ToInt32(row.Cells["StockQuantity"].Value);
                                 var cell = row.Cells["StockStatus"];
-
-                                if (stock < 10)
+                                if(stock == 0)
+                                {
+                                    cell.Value = "Kalmadı";
+                                    cell.Style.BackColor = Color.Black;
+                                    cell.Style.ForeColor = Color.White;
+                                }
+                                else if (stock < 10)
                                 {
                                     cell.Value = "Az";
                                     cell.Style.BackColor = Color.Red;

@@ -148,9 +148,9 @@
             this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(837, 173);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(76, 17);
+            this.label3.Size = new System.Drawing.Size(90, 17);
             this.label3.TabIndex = 21;
-            this.label3.Text = "Ürün Adı:";
+            this.label3.Text = "Ürün Adeti:";
             // 
             // textBox4
             // 
