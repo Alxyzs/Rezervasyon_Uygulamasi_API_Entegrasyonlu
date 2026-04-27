@@ -4,30 +4,32 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:54912",
+      // "applicationUrl": "http://localhost:54912", //Eski API HP Laptop bozulmadan önce ...
+      "applicationUrl": "http://localhost:5003",
       "sslPort": 44377
     }
   },
   "profiles": {
     "http": {
-        "commandName": "Project",
-        "dotnetRunMessages": true,
-        "launchBrowser": true,
-        "launchUrl": "swagger",
-        "applicationUrl": "http://192.168.1.80:5003",
-        "environmentVariables": {
-            "ASPNETCORE_ENVIRONMENT": "Development"
-        }
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://192.168.1.90:5003",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     },
     "https": {
-        "commandName": "Project",
-        "dotnetRunMessages": true,
-        "launchBrowser": true,
-        "launchUrl": "swagger",
-        "applicationUrl": "https://localhost:7174;http://192.168.1.80:5003", 
-        "environmentVariables": {
-            "ASPNETCORE_ENVIRONMENT": "Development"
-        }
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      //"applicationUrl": "https://localhost:7174;http://192.168.1.80:5003", //Eski APİ HP Bozulmadan önce .. 
+      "applicationUrl": "https://localhost:7174;http://192.168.1.90:5003",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     },
     "IIS Express": {
       "commandName": "IISExpress",

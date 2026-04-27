@@ -145,7 +145,7 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 		}
 
 
-		
+
 		//UPDATE İÇİN
 		[HttpPut]
 		public async Task<IActionResult> Update([FromBody] UpdateReservationDto dto)
@@ -168,7 +168,7 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 				return BadRequest("RowVersion geçersiz format.");
 			}
 
-			_context.Entry(entity).OriginalValues["RowVersion"] = rowVersionBytes;
+			_context.Entry(entity).Property("RowVersion").OriginalValue = rowVersionBytes;
 
 			entity.ProductRef = dto.ProductRef;
 			entity.ReservedQty = dto.ReservedQty;
@@ -180,11 +180,22 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 				await _context.SaveChangesAsync();
 				return Ok("Güncellendi");
 			}
-			catch (DbUpdateConcurrencyException)
+			catch (DbUpdateConcurrencyException ex)
 			{
-				return Conflict("Başka biri güncelledi");
+				var entry = ex.Entries.First();
+				var databaseValues = await entry.GetDatabaseValuesAsync();
+
+				if (databaseValues == null)
+					return NotFound("Kayıt silinmiş");
+
+				var dbEntity = databaseValues.ToObject();
+
+				return Conflict(new
+				{
+					Message = "Başka biri güncelledi",
+					CurrentData = dbEntity
+				});
 			}
 		}
-
-	}
+    }
 }
