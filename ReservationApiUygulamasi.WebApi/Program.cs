@@ -1,9 +1,11 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ReservationApiUygulamasi.EL.ApiModels;
 using ReservationApiUygulamasi.WebApi.Context;
+using ReservationApiUygulamasi.WebApi.Hubs;
 using ReservationApiUygulamasi.WebApi.ValidationRules;
 using System.Text;
 
@@ -12,13 +14,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApiContext>();
 
 // VALIDATOR calýsmasý icin eklendi .
-builder.Services.AddScoped<IValidator<ReservationDto>,ReservationValidator>();
+  // - eski  //builder.Services.AddScoped<IValidator<ReservationDto>,ReservationValidator>();
+   builder.Services.AddScoped<IValidator<CreateReservationDto>, ReservationValidator>();
+//
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-// --builder.Services.AddSwaggerGen(); bunun yerýne Authroýze ýcýn alttdaki kod Eklendi
 
+// --builder.Services.AddSwaggerGen(); bunun yerýne Authroýze ýcýn alttdaki kod Eklendi
 //AddSwaggerGen()
 #region AddSwaggerGen için Authorize butonu eklemek için gerekli kodlar
 	builder.Services.AddSwaggerGen(options =>
@@ -80,10 +84,41 @@ builder.Services.AddEndpointsApiExplorer();
 				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signinKey ?? "")) //token'ý imzalayan güvenlik anahtarý bilgisi
 	
 			};
+			// AddJwtBearer içinde . Ýleride belki SignalR 'de token ile calýstýrýrsam kullanýrým , onun ýcýn ekledni Tokený headrda gondermekiçin
+			//options.Events = new JwtBearerEvents
+			//{
+			//	OnMessageReceived = context =>
+			//	{
+			//		var accessToken = context.Request.Query["access_token"];
+			//		var path = context.HttpContext.Request.Path;
+			//		if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/stockHubs"))
+			//		{
+			//			context.Token = accessToken;
+			//		}
+			//		return Task.CompletedTask;
+			//	}
+			//};
 		});
-	
+
 #endregion
 // ----
+
+//SignalR Hub Kullanmak için gerekli Servislerdir 
+	builder.Services.AddSignalR(); //SignalR'ý kullanmak için gerekli servisleri ekler  MAPLEMEDEN SONRA !!
+	builder.Services.AddScoped<StockHubTransmitter>();
+
+	builder.Services.AddCors(options =>
+	{
+		options.AddDefaultPolicy(policy =>
+		{
+			policy.SetIsOriginAllowed(_ => true) // localhost/127.0.0.1/diðerlerinden gelsin
+				  .AllowAnyHeader()
+				  .AllowAnyMethod()
+				  .AllowCredentials();
+		});
+	});
+//
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -96,6 +131,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(); //Corsu kullanýmý ýcýn lazým .
+
 app.UseAuthentication();//Bu Authorize için Authorizeden önce olacak
 
 app.UseMiddleware<LogMiddleware>(); //LogMiddleware'i kullanarak gelen istekleri ve giden cevaplarý loglamak için ekledik . Loglama iþlemi için kullanýlýr. Gelen isteklerin ve giden cevaplarýn detaylarýný kaydeder.
@@ -103,5 +140,9 @@ app.UseMiddleware<LogMiddleware>(); //LogMiddleware'i kullanarak gelen istekleri
 app.UseAuthorization();
 
 app.MapControllers();
+
+//MaplemedenSonra SignalR Hub için Endpoint eklenir .
+	app.MapHub<StockHubs>("/stockHubs");
+//
 
 app.Run();

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReservationApiUygulamasi.WebApi.Context;
 
@@ -11,9 +12,10 @@ using ReservationApiUygulamasi.WebApi.Context;
 namespace ReservationApiUygulamasi.WebApi.Migrations
 {
     [DbContext(typeof(ApiContext))]
-    partial class ApiContextModelSnapshot : ModelSnapshot
+    [Migration("20260414104904_CreateRowVersion2")]
+    partial class CreateRowVersion2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,7 +55,7 @@ namespace ReservationApiUygulamasi.WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReservationDto", (string)null);
+                    b.ToTable("ReservationDto");
                 });
 #pragma warning restore 612, 618
         }

@@ -18,6 +18,7 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			_context = new ApiContext();
 		}
 
+
 		[HttpGet]
 		public async Task<ActionResult<List<ProductDto>>> GetAll()
 		{
@@ -27,5 +28,6 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			var values = await _context.ProductDto.Where(x => x.StockQuantity > 0).ToListAsync();
 			return Ok(values);
 		}
+
 	}
 }

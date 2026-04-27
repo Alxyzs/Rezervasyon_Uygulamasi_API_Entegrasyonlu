@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SignalR Stock Monitor</title>
+</head>
+<body>
+    <h1>SignalR Hub - TEST (WebApplicationApi.Api)</h1>
+    <div id="messages"></div>
+    <button id="connect">Bağlan</button>
+    <button id="disconnect">Bağlantıyı Kes</button>
+
+    <!-- SignalR CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+    
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("http://192.168.1.80:5003/stockHubs")
+            .withAutomaticReconnect()
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        // Mesaj geldiğinde
+        connection.on("UpdateStocks", (data) => {
+            console.log("📊 Stock Update:", data);
+            addMessage(`Stock Update: ${JSON.stringify(data)}`);
+        });
+
+        // Bağlantı durumu
+        connection.onclose((error) => {
+            console.error("❌ Bağlantı kapandı:", error);
+            addMessage("❌ Bağlantı kapandı", "error");
+        });
+
+        connection.onreconnecting((error) => {
+            console.warn("🔄 Yeniden bağlanıyor...", error);
+            addMessage("🔄 Yeniden bağlanıyor...", "warning");
+        });
+
+        connection.onreconnected((connectionId) => {
+            console.log("✅ Yeniden bağlandı:", connectionId);
+            addMessage("✅ Yeniden bağlandı", "success");
+        });
+
+        // Bağlan
+        document.getElementById("connect").addEventListener("click", async () => {
+            try {
+                await connection.start();
+                console.log("✅ SignalR bağlantısı kuruldu");
+                addMessage("✅ Bağlantı kuruldu", "success");
+            } catch (err) {
+                console.error("Bağlantı hatası:", err);
+                addMessage(`❌ Hata: ${err}`, "error");
+            }
+        });
+
+        // Bağlantıyı kes
+        document.getElementById("disconnect").addEventListener("click", async () => {
+            await connection.stop();
+            addMessage("Bağlantı kesildi", "info");
+        });
+
+        // Mesaj gösterme fonksiyonu
+        function addMessage(message, type = "info") {
+            const div = document.getElementById("messages");
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                success: "green",
+                error: "red",
+                warning: "orange",
+                info: "blue"
+            };
+            div.innerHTML += `<div style="color: ${colors[type]}; margin: 5px 0;">
+                [${timestamp}] ${message}
+            </div>`;
+            div.scrollTop = div.scrollHeight;
+        }
+
+        // Sayfa yüklendiğinde otomatik bağlan
+        window.addEventListener("load", () => {
+            document.getElementById("connect").click();
+        });
+    </script>
+</body>
+</html>

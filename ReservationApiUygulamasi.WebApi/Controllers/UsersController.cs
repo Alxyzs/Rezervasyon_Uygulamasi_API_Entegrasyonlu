@@ -19,6 +19,7 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			_context = new ApiContext();
 		}
 
+
 		[HttpGet]
 		public async Task<ActionResult<List<UserDto>>> GetAllUser()
 		{
@@ -28,6 +29,7 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			var values = await _context.UserDto.ToListAsync();
 			return Ok(values);
 		}
+
 
 		[HttpPost]
 		public async Task<IActionResult> InsertUser([FromBody] UserDto dto)
@@ -40,5 +42,6 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 
 			return Ok("Rezervasyon eklendi");
 		}
+
 	}
 }

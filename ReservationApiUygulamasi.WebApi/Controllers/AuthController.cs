@@ -23,6 +23,7 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			_configuration = configuration;
 		}
 
+
 		[HttpPost] //IActionResul API'den gelen isteğin KOdunu ve sonucunu temsil eder . örn Unathtroız401 , BadRequest400, Ok200 gibi döndurur yanı StringYerıne falan alır gelen değerin cevabını kontrol ederiz .Hata mesjaı gostermek için
 		public IActionResult Get([FromBody]LoginRequestApi loginRequest)
 		{
@@ -73,6 +74,7 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			}); //Bu Yapı ise Tam Response Yapsısını ve ApiResponse sınıfı ise standart bir API cevabı yapısıdır . Success Message ve Data gibi alanları içerir | APIden dönen cevabın tutarlı ve anlaşılır olmasını sağlar.
 
 		}
+
 
 		[HttpGet("ValidateToken")] // Yukarda ALınan Tokenı doğrulamak için bir endpoint oluşturduk . Token doğrulama işlemi için kullanılır. Token'ın geçerliliğini kontrol eder. YUKARDAKI TOKENI OLUSUTRMA .
 		public IActionResult ValidateToken(string token)
