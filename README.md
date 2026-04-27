@@ -2,60 +2,62 @@
 
 ## 📖 Overview
 
-This project is a layered reservation management system built with **ASP.NET Core Web API, EF Core, Dapper, and WinForms client integration**.
+This project is a layered **Reservation Management System** built with **ASP.NET Core Web API, Entity Framework Core, Dapper, and Windows Forms (WinForms)**.
 
-It demonstrates a full-stack architecture where the backend API handles business logic and database operations, while the Windows Forms application consumes the API for real-time reservation management.
+It simulates a real-world enterprise architecture where the backend API handles all business logic and database operations, while a desktop client consumes the API for reservation management in real time.
 
-The system includes authentication, logging, and full CRUD operations.
+The system includes secure authentication, logging, and full CRUD operations.
 
 ---
 
 ## 🏗️ Architecture
 
-The project follows a layered architecture:
+The solution is designed using a layered architecture approach:
 
-- WebApi → REST API backend
-- BLL → Business logic layer
-- DAL → Data access layer (EF Core + Dapper)
-- EL → Entity/DTO models
-- UI → Windows Forms client application
+- **WebApi** → REST API (backend service)
+- **BLL** → Business logic layer (rules and processing)
+- **DAL** → Data access layer (EF Core + Dapper)
+- **EL** → Entity / DTO models
+- **UI** → Windows Forms client application
+
+This separation ensures scalability, maintainability, and clean code structure.
 
 ---
 
 ## 🌿 Branch Structure
 
-This project uses multiple branches for separation of concerns:
+The project uses multiple branches for development separation:
 
-- master → stable production version
-- api-branch → Web API development and backend logic
-- ui-branch → Windows Forms UI integration with API
+- **master** → Stable production version
+- **api-branch** → Web API development and backend logic
+- **ui-branch** → WinForms client integration with API
 
 ---
 
-## 🔄 Core Workflow
+## 🔄 System Workflow
 
-- User logs in via API or UI
-- JWT token is generated
-- Token is used for authorized requests
-- Reservation CRUD operations are performed
-- EF Core manages database changes
-- Dapper handles optimized queries
-- Logs are stored in the database
-- UI displays real-time API data
+1. User authenticates via API or UI
+2. JWT token is generated and returned
+3. Token is used for authorized API requests
+4. Reservation operations (Create, Read, Update, Delete) are performed
+5. EF Core handles database transactions
+6. Dapper is used for optimized queries
+7. Logs are stored in the database
+8. WinForms UI displays and consumes API data
 
 ---
 
 ## 🚀 Features
 
-- JWT Authentication & Authorization
-- RESTful API structure
-- Reservation CRUD operations
-- EF Core integration
-- Dapper optimized queries
-- Layered architecture design
-- Database logging system
-- WinForms API client
-- Secure `[Authorize]` endpoints
+- 🔐 JWT Authentication & Authorization
+- 🌐 RESTful API architecture
+- 🧾 Full Reservation CRUD operations
+- 🗄️ Entity Framework Core integration
+- ⚡ Dapper for high-performance queries
+- 🧠 Clean layered architecture design
+- 🪵 Database logging system
+- 🖥️ WinForms API client integration
+- 🔒 Secure `[Authorize]` protected endpoints
 
 ---
 
@@ -75,38 +77,40 @@ This project uses multiple branches for separation of concerns:
 
 ## 🔐 Authentication
 
-- JWT Bearer Token is used for authentication
-- Users must login to receive token
-- Token is required for all protected endpoints
-- `[Authorize]` attribute secures API controllers
+This system uses **JWT Bearer Token authentication**:
+
+- Users must log in to receive a token
+- The token is required for all protected endpoints
+- API endpoints are secured using `[Authorize]` attribute
+- Token is validated on every request
 
 ---
 
 ## 💡 Key Learnings
 
-- Building RESTful APIs with .NET
-- Layered architecture design principles
-- JWT authentication flow
-- WinForms + API integration
-- EF Core and Dapper hybrid usage
-- Real-world backend system structure
+- Designing real-world REST APIs
+- Implementing layered architecture in .NET
+- Managing authentication with JWT
+- Integrating WinForms with Web APIs
+- Combining EF Core and Dapper effectively
+- Building scalable backend systems
 
 ---
 
 ## 📌 Notes
 
-This project simulates a real-world reservation system architecture used in enterprise applications.
+This project is designed as a real-world simulation of an enterprise reservation system.
 
-Future improvements may include:
-- Role-based authorization
+Potential future improvements:
+- Role-based access control
 - SignalR real-time updates
 - Advanced logging dashboard
-- Modern UI redesign (WPF/Web frontend)
+- Modern UI redesign (WPF or web frontend)
 
 ---
 
 ## 🧠 Summary
 
-This system demonstrates a full-stack .NET architecture combining:
+This project demonstrates a full-stack .NET ecosystem:
 
-**API + Database + Desktop Client + Authentication + Logging**
+**Web API + Database + Desktop Client + Authentication + Logging**
