@@ -54,9 +54,9 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			await _context.SaveChangesAsync();
 			return Ok("Rezervasyon eklendi");
 		}
-
+		 
 		[HttpGet("{Id}")]//ID'ye göre arama
-		public async Task<ActionResult<ReservationDto>> GetById(int Id)
+		public async Task<ActionResult<ReservationDto>> GetById(int Id) 
 		{
 			if (_context.ReservationDto == null)
 				return Problem(" 'ApiContext.ReservationDto'  is null.");
