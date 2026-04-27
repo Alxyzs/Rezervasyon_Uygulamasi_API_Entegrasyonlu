@@ -111,6 +111,9 @@ namespace ReservationApiUygulamasi.UI
 
         private async void btnReservationCancel_Click(object sender, EventArgs e)
         {
+            FrmLoading loading = new FrmLoading();
+            loading.Show();
+
             try
             {
                 if (dvgCurrentReservationCancel.SelectedRows.Count == 0)
@@ -134,7 +137,7 @@ namespace ReservationApiUygulamasi.UI
                     if (response.IsSuccessStatusCode)
                     {
                         MessageBox.Show("Rezervasyon başarıyla iptal edildi.");
-                        await LoadUserReservationsAsync(); // listeyi yenile
+                        await LoadUserReservationsAsync();
                     }
                     else
                     {
@@ -146,6 +149,10 @@ namespace ReservationApiUygulamasi.UI
             catch (Exception ex)
             {
                 MessageBox.Show("Rezervasyon iptali sırasında hata: " + ex.Message);
+            }
+            finally
+            {
+                loading.Close();
             }
         }
 

@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,6 +21,8 @@ namespace ReservationApiUygulamasi.UI
 
         private async void ReservationUpdate_Load(object sender, EventArgs e)
         {
+
+
             await LoadUserReservationsAsync();
             dvgCurrentReservations.Columns["Id"].Visible = false;
             dvgCurrentReservations.Columns["userID"].Visible = false;
@@ -85,24 +89,59 @@ namespace ReservationApiUygulamasi.UI
             this.Hide();
         }
 
-        private void btnUpdateReservation_Click(object sender, EventArgs e)
+        private async void btnUpdateReservation_Click(object sender, EventArgs e)
         {
+            FrmLoading loading = new FrmLoading();
+            loading.Show();
+            if (!int.TryParse(txtUrunID.Text, out int id) || !double.TryParse(txtstockQty.Text, out double qty))
+            {
+                MessageBox.Show("URUN SECİNİZ");
+                return;
+            }
             try
             {
-                if (dvgCurrentReservations.CurrentRow == null)
+                var dto = new Reservation
                 {
-                    MessageBox.Show("Lütfen Güncellenecek Malzeme Seçiniz...");
-                    return;
+                    id = id,
+                    userID = Convert.ToInt32(txtUserID.Text),
+                    reservedQty = qty,
+                    notes = txtNotes.Text,
+                    rowVersion = txtRowVersion.Text
+                };
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://192.168.1.90:5003/");
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ConfigurationHelper.LoadAppSettings().Token);
+
+
+                    var json = JsonConvert.SerializeObject(dto);
+
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var response = await client.PutAsync("api/Reservations", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Başarılı");
+                        await LoadUserReservationsAsync();
+
+                    }
+                    else
+                    {
+                        var error = await response.Content.ReadAsStringAsync();
+                        MessageBox.Show(error);
+                    }
                 }
-
-                int UserID = CurrentUser.UserID;
-                var selectedProduct = (ProductDto)dvgCurrentReservations.CurrentRow.DataBoundItem;
-                int MalzemKodu = Convert.ToInt32(txtproductRef.Text);
-                string Notes = txtNotes.Text;
-                double miktar = selectedProduct.StockQuantity;
-
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                loading.Close();
+            }
 
         }
 
@@ -112,9 +151,12 @@ namespace ReservationApiUygulamasi.UI
             {
                 DataGridViewRow row = dvgCurrentReservations.Rows[e.RowIndex];
 
-                txtUrunAdi.Text = row.Cells["KitapId"].Value?.ToString() ?? "";
-                txtUrunNumarasi.Text = row.Cells["Ad"].Value?.ToString() ?? "";
-                //devamı gelecek...
+                txtRowVersion.Text = row.Cells["rowVersion"].Value?.ToString() ?? "";
+                txtstockQty.Text = row.Cells["reservedQty"].Value?.ToString() ?? "";
+                txtNotes.Text = row.Cells["Notes"].Value?.ToString() ?? "";
+                txtUrunID.Text = row.Cells["Id"].Value?.ToString() ?? "";
+                txtUserID.Text = row.Cells["userID"].Value?.ToString() ?? "";
+                txtproductRef.Text = row.Cells["productRef"].Value?.ToString() ?? "";
             }
         }
     }

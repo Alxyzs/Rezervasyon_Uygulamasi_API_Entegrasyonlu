@@ -10,6 +10,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Drawing;
 using Microsoft.AspNetCore.SignalR.Client;
+using System.Security.Cryptography;
 
 
 namespace ReservationApiUygulamasi.UI
@@ -74,11 +75,11 @@ namespace ReservationApiUygulamasi.UI
             connection = new HubConnectionBuilder().WithUrl(new Uri(_client.BaseAddress, "stockHubs")).WithAutomaticReconnect().Build();
             //connection = new HubConnectionBuilder().WithUrl("http://192.168.1.90:5003/stockHubs").WithAutomaticReconnect().Build();
 
+            //SignalRHub'dan sinyal gelince otomatik datagrid refreshler.
             connection.On<StockUpdateDto>("UpdateStocks", (data) =>
             {
                 Invoke((MethodInvoker)async delegate
                 {
-                    MessageBox.Show(data.Message);
                     await LoadProductsFromApi();
                 });
             });
@@ -183,20 +184,35 @@ namespace ReservationApiUygulamasi.UI
 
         private async void btnReserveSelected_Click(object sender, EventArgs e)
         {
-            if (dgv_Data.CurrentRow == null)
+            FrmLoading loading = new FrmLoading();
+            loading.Show();
+            try
             {
-                MessageBox.Show("Lütfen Malzeme Seçiniz...");
-                return;
+
+                if (dgv_Data.CurrentRow == null)
+                {
+                    MessageBox.Show("Lütfen Malzeme Seçiniz...");
+                    return;
+                }
+
+                int UserID = CurrentUser.UserID;
+                var selectedProduct = (ProductDto)dgv_Data.CurrentRow.DataBoundItem;
+                int MalzemKodu = Convert.ToInt32(txtproductRef.Text);
+                string Notes = txtNotes.Text;
+                double miktar = selectedProduct.StockQuantity;
+
+                bool success = await SendReservationToApi(UserID, MalzemKodu, Notes, miktar);
+                MessageBox.Show(success ? "Rezervasyon alınmıştır." : "Rezervasyon gönderilemedi.");
             }
-
-            int UserID = CurrentUser.UserID;
-            var selectedProduct = (ProductDto)dgv_Data.CurrentRow.DataBoundItem;
-            int MalzemKodu = Convert.ToInt32(txtproductRef.Text);
-            string Notes = txtNotes.Text;
-            double miktar = selectedProduct.StockQuantity;
-
-            bool success = await SendReservationToApi(UserID, MalzemKodu, Notes, miktar);
-            MessageBox.Show(success ? "Rezervasyon alınmıştır." : "Rezervasyon gönderilemedi.");
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                loading.Close();
+            }
+            
         }
 
         void AuthorizeOtomatik()

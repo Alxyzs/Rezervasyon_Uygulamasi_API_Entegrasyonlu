@@ -31,19 +31,17 @@
             this.dvgCurrentReservations = new System.Windows.Forms.DataGridView();
             this.lblCurrentReservations = new System.Windows.Forms.Label();
             this.btnGoBack = new System.Windows.Forms.Button();
-            this.txtUrunAdi = new System.Windows.Forms.TextBox();
+            this.txtUrunID = new System.Windows.Forms.TextBox();
             this.lblUsername = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtUrunNumarasi = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.txtRowVersion = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.txtstockQty = new System.Windows.Forms.TextBox();
             this.btnUpdateReservation = new System.Windows.Forms.Button();
+            this.txtUserID = new System.Windows.Forms.TextBox();
             this.txtproductRef = new System.Windows.Forms.TextBox();
-            this.txtstockQuantity = new System.Windows.Forms.TextBox();
             this.txtNotes = new System.Windows.Forms.RichTextBox();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dvgCurrentReservations)).BeginInit();
             this.SuspendLayout();
             // 
@@ -87,88 +85,65 @@
             this.btnGoBack.UseVisualStyleBackColor = false;
             this.btnGoBack.Click += new System.EventHandler(this.btnGoBack_Click);
             // 
-            // txtUrunAdi
+            // txtUrunID
             // 
-            this.txtUrunAdi.Location = new System.Drawing.Point(751, 78);
-            this.txtUrunAdi.Name = "txtUrunAdi";
-            this.txtUrunAdi.Size = new System.Drawing.Size(256, 20);
-            this.txtUrunAdi.TabIndex = 10;
+            this.txtUrunID.Location = new System.Drawing.Point(701, 85);
+            this.txtUrunID.Name = "txtUrunID";
+            this.txtUrunID.ReadOnly = true;
+            this.txtUrunID.Size = new System.Drawing.Size(256, 20);
+            this.txtUrunID.TabIndex = 10;
+            this.txtUrunID.Visible = false;
             // 
             // lblUsername
             // 
             this.lblUsername.AutoSize = true;
             this.lblUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.lblUsername.ForeColor = System.Drawing.Color.White;
-            this.lblUsername.Location = new System.Drawing.Point(837, 58);
+            this.lblUsername.Location = new System.Drawing.Point(787, 65);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(76, 17);
+            this.lblUsername.Size = new System.Drawing.Size(68, 17);
             this.lblUsername.TabIndex = 17;
-            this.lblUsername.Text = "Ürün Adı:";
+            this.lblUsername.Text = "Ürün ID:";
+            this.lblUsername.Visible = false;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(820, 115);
+            this.label1.Location = new System.Drawing.Point(770, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(121, 17);
+            this.label1.Size = new System.Drawing.Size(93, 17);
             this.label1.TabIndex = 19;
-            this.label1.Text = "Ürün Numarası:";
+            this.label1.Text = "RowVersion";
+            this.label1.Visible = false;
             // 
-            // txtUrunNumarasi
+            // txtRowVersion
             // 
-            this.txtUrunNumarasi.Location = new System.Drawing.Point(751, 135);
-            this.txtUrunNumarasi.Name = "txtUrunNumarasi";
-            this.txtUrunNumarasi.Size = new System.Drawing.Size(256, 20);
-            this.txtUrunNumarasi.TabIndex = 18;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(837, 230);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(76, 17);
-            this.label2.TabIndex = 23;
-            this.label2.Text = "Ürün Adı:";
-            // 
-            // textBox3
-            // 
-            this.textBox3.Location = new System.Drawing.Point(751, 250);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(256, 20);
-            this.textBox3.TabIndex = 22;
+            this.txtRowVersion.Location = new System.Drawing.Point(701, 29);
+            this.txtRowVersion.Name = "txtRowVersion";
+            this.txtRowVersion.ReadOnly = true;
+            this.txtRowVersion.Size = new System.Drawing.Size(256, 20);
+            this.txtRowVersion.TabIndex = 18;
+            this.txtRowVersion.Visible = false;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(837, 173);
+            this.label3.Location = new System.Drawing.Point(787, 119);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 17);
             this.label3.TabIndex = 21;
             this.label3.Text = "Ürün Adeti:";
             // 
-            // textBox4
+            // txtstockQty
             // 
-            this.textBox4.Location = new System.Drawing.Point(751, 193);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(256, 20);
-            this.textBox4.TabIndex = 20;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(860, 285);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(38, 17);
-            this.label5.TabIndex = 25;
-            this.label5.Text = "Not:";
+            this.txtstockQty.Location = new System.Drawing.Point(701, 139);
+            this.txtstockQty.Name = "txtstockQty";
+            this.txtstockQty.Size = new System.Drawing.Size(256, 20);
+            this.txtstockQty.TabIndex = 20;
             // 
             // btnUpdateReservation
             // 
@@ -180,7 +155,7 @@
             this.btnUpdateReservation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUpdateReservation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.btnUpdateReservation.ForeColor = System.Drawing.Color.White;
-            this.btnUpdateReservation.Location = new System.Drawing.Point(714, 419);
+            this.btnUpdateReservation.Location = new System.Drawing.Point(664, 294);
             this.btnUpdateReservation.Name = "btnUpdateReservation";
             this.btnUpdateReservation.Size = new System.Drawing.Size(332, 42);
             this.btnUpdateReservation.TabIndex = 26;
@@ -188,51 +163,60 @@
             this.btnUpdateReservation.UseVisualStyleBackColor = false;
             this.btnUpdateReservation.Click += new System.EventHandler(this.btnUpdateReservation_Click);
             // 
+            // txtUserID
+            // 
+            this.txtUserID.Cursor = System.Windows.Forms.Cursors.Default;
+            this.txtUserID.Location = new System.Drawing.Point(12, 396);
+            this.txtUserID.Name = "txtUserID";
+            this.txtUserID.Size = new System.Drawing.Size(100, 20);
+            this.txtUserID.TabIndex = 27;
+            this.txtUserID.Visible = false;
+            // 
             // txtproductRef
             // 
             this.txtproductRef.Cursor = System.Windows.Forms.Cursors.Default;
-            this.txtproductRef.Location = new System.Drawing.Point(12, 396);
+            this.txtproductRef.Location = new System.Drawing.Point(127, 396);
             this.txtproductRef.Name = "txtproductRef";
             this.txtproductRef.Size = new System.Drawing.Size(100, 20);
-            this.txtproductRef.TabIndex = 27;
+            this.txtproductRef.TabIndex = 28;
             this.txtproductRef.Visible = false;
-            // 
-            // txtstockQuantity
-            // 
-            this.txtstockQuantity.Cursor = System.Windows.Forms.Cursors.Default;
-            this.txtstockQuantity.Location = new System.Drawing.Point(127, 396);
-            this.txtstockQuantity.Name = "txtstockQuantity";
-            this.txtstockQuantity.Size = new System.Drawing.Size(100, 20);
-            this.txtstockQuantity.TabIndex = 28;
-            this.txtstockQuantity.Visible = false;
             // 
             // txtNotes
             // 
-            this.txtNotes.Location = new System.Drawing.Point(751, 305);
+            this.txtNotes.Location = new System.Drawing.Point(701, 192);
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(256, 85);
             this.txtNotes.TabIndex = 29;
             this.txtNotes.Text = "";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.label5.ForeColor = System.Drawing.Color.White;
+            this.label5.Location = new System.Drawing.Point(810, 172);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(38, 17);
+            this.label5.TabIndex = 25;
+            this.label5.Text = "Not:";
             // 
             // ReservationUpdate
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.ClientSize = new System.Drawing.Size(1081, 505);
+            this.ClientSize = new System.Drawing.Size(1008, 505);
             this.Controls.Add(this.txtNotes);
-            this.Controls.Add(this.txtstockQuantity);
             this.Controls.Add(this.txtproductRef);
+            this.Controls.Add(this.txtUserID);
             this.Controls.Add(this.btnUpdateReservation);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox3);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.textBox4);
+            this.Controls.Add(this.txtstockQty);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtUrunNumarasi);
+            this.Controls.Add(this.txtRowVersion);
             this.Controls.Add(this.lblUsername);
-            this.Controls.Add(this.txtUrunAdi);
+            this.Controls.Add(this.txtUrunID);
             this.Controls.Add(this.btnGoBack);
             this.Controls.Add(this.lblCurrentReservations);
             this.Controls.Add(this.dvgCurrentReservations);
@@ -250,18 +234,16 @@
         private System.Windows.Forms.DataGridView dvgCurrentReservations;
         private System.Windows.Forms.Label lblCurrentReservations;
         private System.Windows.Forms.Button btnGoBack;
-        private System.Windows.Forms.TextBox txtUrunAdi;
+        private System.Windows.Forms.TextBox txtUrunID;
         private System.Windows.Forms.Label lblUsername;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtUrunNumarasi;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox txtRowVersion;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtstockQty;
         private System.Windows.Forms.Button btnUpdateReservation;
+        private System.Windows.Forms.TextBox txtUserID;
         private System.Windows.Forms.TextBox txtproductRef;
-        private System.Windows.Forms.TextBox txtstockQuantity;
         private System.Windows.Forms.RichTextBox txtNotes;
+        private System.Windows.Forms.Label label5;
     }
 }
