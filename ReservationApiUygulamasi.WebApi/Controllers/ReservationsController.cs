@@ -130,38 +130,82 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 
 
 
-		[HttpDelete("{Id}")]
-		public async Task<IActionResult> DeleteProduct(int Id)
-		{
-			if (_context.ReservationDto == null)
-				return Problem(" 'ApiContext.ReservationDto'  is null.");
+        [HttpDelete("{Id}")] //Burası eğer rowVersion kontrol yapar 2Force delete ise eğer değişen veriyi silmek isterse yani veri değişti degısenı gosterır sonra silmek ıstıyomusunuz ? dıye sorar ve siler 
+        public async Task<IActionResult> DeleteProduct(int Id, [FromHeader] string rowVersion)
+        {
+            if (_context.ReservationDto == null)
+                return Problem(" 'ApiContext.ReservationDto' is null.");
 
-			var reservation = await _context.ReservationDto.FindAsync(Id);
-			if (reservation == null) return NotFound("Rezervasyon bulunamadı.");
+            var reservation = await _context.ReservationDto.AsNoTracking() .FirstOrDefaultAsync(x => x.Id == Id); 
 
-			_context.ReservationDto.Remove(reservation);
-			await _context.SaveChangesAsync();
-			return Ok("Rezervasyon silindi");
-		}
+            if (reservation == null)
+                return NotFound("Rezervasyon bulunamadı.");
+
+            byte[] rowVersionBytes; 
+            try
+            {
+                rowVersionBytes = Convert.FromBase64String(rowVersion);
+            }
+            catch
+            {
+                return BadRequest("RowVersion geçersiz format.");
+            }
+
+            _context.ReservationDto.Attach(reservation);
+            _context.Entry(reservation).OriginalValues["RowVersion"] = rowVersionBytes; 
+            _context.ReservationDto.Remove(reservation);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok("Rezervasyon silindi");
+            }
+
+            catch (DbUpdateConcurrencyException)
+            {
+                var currentData = await _context.ReservationDto
+                    .FirstOrDefaultAsync(x => x.Id == Id);
+
+                return Conflict(new
+                {
+                    Message = "Kayıt güncellendi silmek istediğinize emin misiniz?",
+                    CurrentData = currentData
+                });
+            }
+        }
 
 
 
-		//UPDATE İÇİN
-		[HttpPut]
+        [HttpDelete("{Id}/force")] //Burası zorla silme islem yeri.
+        public async Task<IActionResult> ForceDeleteProduct(int Id)
+        {
+            if (_context.ReservationDto == null)
+                return Problem("'ApiContext.ReservationDto' is null.");
+
+            var reservation = await _context.ReservationDto.FindAsync(Id);
+            if (reservation == null)
+                return NotFound("Rezervasyon bulunamadı.");
+
+            _context.ReservationDto.Remove(reservation);
+            await _context.SaveChangesAsync();
+            return Ok("Rezervasyon silindi");
+        }
+
+
+
+        //UPDATE İÇİN
+        [HttpPut]
 		public async Task<IActionResult> Update([FromBody] UpdateReservationDto dto)
 		{
 			var entity = await _context.ReservationDto.FirstOrDefaultAsync(x => x.Id == dto.Id);
 
 			if (entity == null)
-				return NotFound();
-
-			if (string.IsNullOrEmpty(dto.RowVersion))
-				return BadRequest("RowVersion zorunludur.");
+				return NotFound("Rezervasyon bulunamadı.");
 
 			byte[] rowVersionBytes;
 			try
 			{
-				rowVersionBytes = Convert.FromBase64String(dto.RowVersion);
+				rowVersionBytes = Convert.FromBase64String(dto.RowVersion ?? "");
 			}
 			catch
 			{
