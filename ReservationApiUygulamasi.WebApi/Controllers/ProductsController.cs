@@ -18,15 +18,15 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			_context = new ApiContext();
 		}
 
-
 		[HttpGet]
 		public async Task<ActionResult<List<ProductDto>>> GetAll()
 		{
-			if (_context.ProductDto == null)
+			if (_context.Products == null)
 				return Problem(" 'ApiContext.ReservationDto'  is null."); //NUL Referencess Hatası için .
 
-			var values = await _context.ProductDto.Where(x => x.StockQuantity > 0).ToListAsync();
-			return Ok(values);
+            var values = await _context.Products.AsNoTracking().Where(x => x.StockQuantity > 0).ToListAsync();
+
+            return Ok(values);
 		}
 
 	}

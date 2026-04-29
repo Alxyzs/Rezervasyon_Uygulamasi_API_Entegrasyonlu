@@ -18,7 +18,9 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 	{
 		//Appsettings için eklendi
 		private readonly IConfiguration _configuration;
-		public AuthController(IConfiguration configuration)
+		QueryBLL _querybll = new QueryBLL(new DAL.QueryDAL());
+
+        public AuthController(IConfiguration configuration)
 		{
 			_configuration = configuration;
 		}
@@ -34,7 +36,7 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 				var Isuuer	  = _configuration["JwtConfig:Issuer"];
 			#endregion
 
-			var accaountStatus = QueryBLL.GetSearchUser(loginRequest.Username ?? "", loginRequest.Password ?? "");
+			var accaountStatus = _querybll.GetSearchUser(loginRequest.Username ?? "", loginRequest.Password ?? "");
 			if (accaountStatus == null || accaountStatus.Count == 0 )
 				return Unauthorized("Kullanıcı adı veya şifre hatalı.");
 

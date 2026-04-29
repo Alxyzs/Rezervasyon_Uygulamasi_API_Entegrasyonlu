@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReservationApiUygulamasi.BLL;
 using ReservationApiUygulamasi.EL.ApiModels;
 using ReservationApiUygulamasi.WebApi.Context;
 using ReservationApiUygulamasi.WebApi.Hubs;
@@ -18,7 +19,7 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 		private readonly ApiContext _context;
 		private readonly IValidator<CreateReservationDto> _validator; //BuFludentValidation içindir kuralları kontrol eder sadece .
 		private readonly StockHubTransmitter _transMitter; //Bu ise SignalR ile YENI REZERVASYON EKLEDİndi ve stok azalır buyuzden stok güncellemelerini bildirmek için kullanılır yani MESAJ,BİLDİRİM İÇİN Ctor'da belirtilmeli .Kullanılacak yerdede enjekte edilip kullanılır ASağda örnek POST'da.
-
+		QueryBLL _querybll = new QueryBLL(new DAL.QueryDAL());
 
 		public ReservationsController(IValidator<CreateReservationDto> validator, ApiContext context, StockHubTransmitter transMitter)
 		{
@@ -58,13 +59,28 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			if (!validationResult.IsValid)
 				return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
 
-			var entity = new ReservationDto
+            #region GirilenMiktar ile Stok Miktarını Karşılaştırma 
+            //var stockResult = _querybll.CheckStock(dto.ProductRef,dto.UnitRef,dto.WhNumber,dto.ReservedQty);
+
+            //if (!stockResult.IsValid)
+            //{
+            //    return BadRequest(new
+            //    {
+            //        Message = "Yetersiz Stok ",
+            //        MaxQuantity = stockResult.AvailableStock
+            //    });
+            //}
+            #endregion
+
+            var entity = new ReservationDto
 			{
 				ProductRef = dto.ProductRef,
 				ReservedQty = dto.ReservedQty,
 				Notes = dto.Notes,
 				UserID = dto.UserID,
-				DATE = DateTime.UtcNow
+				UnitRef = dto.UnitRef,
+				WhNumber = dto.WhNumber,
+                DATE = DateTime.UtcNow
 			};
 
 			await _context.ReservationDto.AddAsync(entity); 
@@ -73,11 +89,11 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			//Burada SignalR ile Stok bildirimi gönderilir . Stok güncellendiğinde tüm bağlı istemcilere bildirim gönderilir ve stok durumunu güncellemeleri sağlanır 
 			await _transMitter.UpdateStocksAsync(new
 			{
-				Message = "Udpdate Stocks . Refresh Page ",
+				Message = "Update Stocks . Refresh Page ",
 				UpdateAt = DateTime.UtcNow,
 				Product = dto.ProductRef,
 				Quantity = dto.ReservedQty
-			});
+			});//SignalRHub ile ilgili bildririm .
 
 			return Ok("Rezervasyon eklendi");
 		}
@@ -219,10 +235,22 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			entity.Notes = dto.Notes;
 			entity.UserID = dto.UserID;
 
-			try
+
+            try
 			{
 				await _context.SaveChangesAsync();
-				return Ok("Güncellendi");
+
+                //Buryada SignalR ile stok bildirimi gönderildi . ONELI HERZAMAN SAVECHANGES'Ten sonra SıgnalR gonderilir .
+                await _transMitter.UpdateStocksAsync(new
+                {
+                    Message = "Update Stocks . Refresh Page ",
+                    UpdateAt = DateTime.UtcNow,
+                    Product = dto.ProductRef,
+                    Quantity = dto.ReservedQty
+                });//SignalRHub ile ilgili bildirim
+
+
+                return Ok("Güncellendi");
 			}
 			catch (DbUpdateConcurrencyException ex)
 			{
@@ -241,5 +269,8 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 				});
 			}
 		}
+
+
+
     }
 }

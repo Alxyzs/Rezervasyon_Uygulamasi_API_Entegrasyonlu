@@ -33,3 +33,6 @@
 	  sonra ise Datagrid guncellenecek bıdaha Load olayı calıstırılcakkı RowVersionu Yenıden Alsın ve böylelıkle Eşzamanlılık hatası kontrolu yapılacak ! -
 	  --UNUTMA ŞİMDİ BEN UI'dan GELEN ROWVERSİONU KONTROL EDECEĞİM VE EĞER UYUŞMAZSA O ZAMAN KULLANICIYA EŞZAMANLILIK HATASI VERİLECEK VE GUNCEL VERİYİ GÖSTERMEK İÇİN TEKRAR LOAD OLAYI ÇALIŞTIRILACAK ! - YAPILACAK ! 	
 	  _context.Entry(entity).OriginalValues["RowVersion"] = rowVersionBytes  bu kod ile o yazdıgım yapılmıs ama DEnenecek Pazartesi . !
+
+	  ---YAPILACAK
+	  - API'de eğer eldeki mıktrrdan fazla girilirse HATA Verilecek ! yap yorum satırı yapıldı !
