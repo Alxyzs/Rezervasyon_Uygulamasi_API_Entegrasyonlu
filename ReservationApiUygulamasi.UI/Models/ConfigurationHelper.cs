@@ -2,7 +2,6 @@
 using System.IO;
 using Newtonsoft.Json;
 using ReservationApiUygulamasi.UI;
-using ReservationApiUygulamasi.UI.Models;
 
 public static class ConfigurationHelper
 {

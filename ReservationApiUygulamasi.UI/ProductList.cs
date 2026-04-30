@@ -10,14 +10,18 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Drawing;
 using Microsoft.AspNetCore.SignalR.Client;
-
+using System.ComponentModel;
 
 namespace ReservationApiUygulamasi.UI
 {
     public partial class ProductList : Form
     {
         private HttpClient _client;
-        private List<ProductDto> _products;
+
+        private BindingList<ProductDto> _products;
+
+        // ✅ EKLENDİ
+        private BindingSource _bs = new BindingSource();
 
         public ProductList()
         {
@@ -45,9 +49,11 @@ namespace ReservationApiUygulamasi.UI
             var token = ConfigurationHelper.LoadAppSettings().Token;
             if (!string.IsNullOrWhiteSpace(token))
             {
-                _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                _client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             }
         }
+
         private HttpClientHandler GetSSL()
         {
             return new HttpClientHandler
@@ -55,11 +61,57 @@ namespace ReservationApiUygulamasi.UI
                 ServerCertificateCustomValidationCallback = (m, c, ch, e) => true
             };
         }
+        private bool messageShown = false;
+
+        private void ShowUpdateMessage()
+        {
+            if (!messageShown)
+            {
+                MessageBox.Show("Kırmızı olan satırlar güncellenmiştir.");
+                messageShown = true;
+            }
+        }
+        private async void FadeRowColor(DataGridViewRow row)
+        {
+            int steps = 20;
+
+            for (int i = 0; i < steps; i++)
+            {
+                await Task.Delay(100);
+
+                int r = 255;
+                int g = 255 - (i * 10);
+                int b = 255 - (i * 10);
+
+                row.DefaultCellStyle.BackColor = Color.FromArgb(r, g, b);
+            }
+
+            row.DefaultCellStyle.BackColor = Color.White;
+        }
+        private void UpdateRow(SignalRDto data)
+        {
+            foreach (DataGridViewRow row in dgv_Data.Rows)
+            {
+                if (row.Cells["Id"].Value.ToString() == data.Product.ToString())
+                {
+                    row.Cells["stockQuantity"].Value = data.Quantity;
+
+                    row.DefaultCellStyle.BackColor = Color.Red;
+
+                    FadeRowColor(row);
+
+                    ShowUpdateMessage();
+
+                    break;
+                }
+            }
+        }
+
 
         private async void ProductList_Load(object sender, EventArgs e)
         {
-
             var apiSettings = ConfigurationHelper.LoadApiSettings();
+
             var handler = new HttpClientHandler
             {
                 ServerCertificateCustomValidationCallback = (m, c, ch, sslErrors) => true
@@ -68,23 +120,19 @@ namespace ReservationApiUygulamasi.UI
             _client = new HttpClient(handler)
             {
                 BaseAddress = new Uri(apiSettings.BaseUrl),
-                Timeout = TimeSpan.FromSeconds(apiSettings.Timeout) 
+                Timeout = TimeSpan.FromSeconds(apiSettings.Timeout)
             };
 
             connection = new HubConnectionBuilder().WithUrl(new Uri(_client.BaseAddress, "stockHubs")).WithAutomaticReconnect().Build();
-            //connection = new HubConnectionBuilder().WithUrl("http://192.168.1.90:5003/stockHubs").WithAutomaticReconnect().Build();
-
-            connection.On<StockUpdateDto>("UpdateStocks", (data) =>
+            connection.On<SignalRDto>("UpdateStocks", (data) =>
             {
-                Invoke((MethodInvoker)async delegate
+                Invoke((MethodInvoker)(() =>
                 {
-                    MessageBox.Show(data.Message);
-                    await LoadProductsFromApi();
-                });
+                    UpdateRow(data);
+                }));
             });
 
             await connection.StartAsync();
-            //SignalR Hub
 
             await LoadProductsFromApi();
 
@@ -106,49 +154,23 @@ namespace ReservationApiUygulamasi.UI
                     client.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
 
                     if (!string.IsNullOrWhiteSpace(token))
-                        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                    //#RestSharp Nuget package'dan indirilebilir.
-
+                        client.DefaultRequestHeaders.Authorization =
+                            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                     var response = await client.GetAsync("api/Products");
 
                     if (response.IsSuccessStatusCode)
                     {
                         var json = await response.Content.ReadAsStringAsync();
-                        _products = JsonConvert.DeserializeObject<List<ProductDto>>(json);
+                        var list = JsonConvert.DeserializeObject<List<ProductDto>>(json);
 
-                        dgv_Data.DataSource = null;
-                        dgv_Data.DataSource = _products;
+                        _products = new BindingList<ProductDto>(list);
 
-                        foreach (DataGridViewRow row in dgv_Data.Rows)
-                        {
-                            if (row.Cells["StockQuantity"].Value != null)
-                            {
-                                int stock = Convert.ToInt32(row.Cells["StockQuantity"].Value);
-                                var cell = row.Cells["StockStatus"];
+                        // ✅ FIX: BindingSource kullan
+                        _bs.DataSource = _products;
+                        dgv_Data.DataSource = _bs;
 
-                                if (stock < 10)
-                                {
-                                    cell.Value = "Az";
-                                    cell.Style.BackColor = Color.Red;
-                                    cell.Style.ForeColor = Color.White;
-                                }
-                                else if (stock < 50)
-                                {
-                                    cell.Value = "Orta";
-                                    cell.Style.BackColor = Color.Orange;
-                                    cell.Style.ForeColor = Color.Black;
-                                }
-                                else
-                                {
-                                    cell.Value = "Fazla";
-                                    cell.Style.BackColor = Color.Green;
-                                    cell.Style.ForeColor = Color.White;
-                                }
-                            }
-                        }
-
+                        ApplyStockStatus();
                     }
                     else
                     {
@@ -161,45 +183,178 @@ namespace ReservationApiUygulamasi.UI
                 MessageBox.Show("Bir hata oluştu: " + ex.Message);
             }
         }
-        private void txtSearch_TextChanged(object sender, EventArgs e)
+
+        private void ApplyStockStatus()
         {
-            string searchText = txtSearch.Text.Trim();
+            foreach (DataGridViewRow row in dgv_Data.Rows)
+            {
+                if (row.Cells["StockQuantity"].Value != null)
+                {
+                    int stock = Convert.ToInt32(row.Cells["StockQuantity"].Value);
+                    var cell = row.Cells["StockStatus"];
 
-            var filtered = _products
-                .Where(p => p.ProductName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0
-                         || p.ProductCode.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
-                .ToList();
-
-            dgv_Data.DataSource = null;
-            dgv_Data.DataSource = filtered;
-            dgv_Data.Columns["id"].Visible = false;
+                    if (stock == 0)
+                    {
+                        cell.Value = "Kalmadı";
+                        cell.Style.BackColor = Color.Black;
+                        cell.Style.ForeColor = Color.White;
+                    }
+                    else if (stock < 10)
+                    {
+                        cell.Value = "Az";
+                        cell.Style.BackColor = Color.Red;
+                        cell.Style.ForeColor = Color.White;
+                    }
+                    else if (stock < 50)
+                    {
+                        cell.Value = "Orta";
+                        cell.Style.BackColor = Color.Orange;
+                        cell.Style.ForeColor = Color.Black;
+                    }
+                    else
+                    {
+                        cell.Value = "Fazla";
+                        cell.Style.BackColor = Color.Green;
+                        cell.Style.ForeColor = Color.White;
+                    }
+                }
+            }
         }
 
+        private async void StartFadeEffect(DataGridViewCell cell, Color highlightColor)
+        {
+            Color originalColor = dgv_Data.DefaultCellStyle.BackColor;
+
+            int steps = 30;
+            int delay = 20;
+
+            for (int i = 0; i <= steps; i++)
+            {
+                float ratio = (float)i / steps;
+
+                int r = (int)(highlightColor.R + (originalColor.R - highlightColor.R) * ratio);
+                int g = (int)(highlightColor.G + (originalColor.G - highlightColor.G) * ratio);
+                int b = (int)(highlightColor.B + (originalColor.B - highlightColor.B) * ratio);
+
+                cell.Style.BackColor = Color.FromArgb(r, g, b);
+
+                await Task.Delay(delay);
+            }
+
+            cell.Style.BackColor = originalColor;
+        }
+
+        private void UpdateSingleRow(SignalRDto data)
+        {
+            if (_products == null) return;
+
+            var product = _products.FirstOrDefault(p => p.Id == data.Id);
+            if (product == null) return;
+
+            double oldStock = product.StockQuantity;
+            double newStock = data.Quantity;
+
+            product.StockQuantity = newStock;
+
+            foreach (DataGridViewRow row in dgv_Data.Rows)
+            {
+                if (row.Cells["Id"].Value != null &&
+                    Convert.ToInt32(row.Cells["Id"].Value) == data.Id)
+                {
+                    Color highlightColor;
+
+                    if (newStock > oldStock)
+                        highlightColor = Color.LightGreen;
+                    else if (newStock < oldStock)
+                        highlightColor = Color.LightCoral;
+                    else
+                        highlightColor = dgv_Data.DefaultCellStyle.BackColor;
+
+                    StartFadeEffect(row.Cells["StockQuantity"], highlightColor);
+
+                    break;
+                }
+            }
+
+            ApplyStockStatus();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            string searchText = txtSearch.Text.Trim().ToLower();
+
+            if (string.IsNullOrEmpty(searchText))
+            {
+                _bs.DataSource = _products;
+            }
+            else
+            {
+                var filtered = _products
+                    .Where(p => p.ProductName.ToLower().Contains(searchText)
+                             || p.ProductCode.ToLower().Contains(searchText))
+                    .ToList();
+
+                _bs.DataSource = new BindingList<ProductDto>(filtered);
+            }
+        }
 
         private async void btnReserveSelected_Click(object sender, EventArgs e)
         {
-            if (dgv_Data.CurrentRow == null)
+            FrmLoading loading = new FrmLoading();
+            loading.Show();
+
+            try
             {
-                MessageBox.Show("Lütfen Malzeme Seçiniz...");
-                return;
+                if (dgv_Data.CurrentRow == null)
+                {
+                    MessageBox.Show("Lütfen Malzeme Seçiniz...");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(txtMiktar.Text))
+                {
+                    MessageBox.Show("Miktar Giriniz "); return;
+                }
+
+                int UserID = CurrentUser.UserID;
+                var selectedProduct = (ProductDto)dgv_Data.CurrentRow.DataBoundItem;
+
+                int MalzemKodu = Convert.ToInt32(txtproductRef.Text);
+                string Notes = txtNotes.Text;
+                double quantity = Convert.ToInt32(txtMiktar.Text);
+
+                if (quantity > selectedProduct.StockQuantity)
+                {
+                    MessageBox.Show("Fazla Girilemez");
+                    return;
+                }
+
+                int? unitRef = selectedProduct.unitRef ?? 0;
+                int WhNumber = selectedProduct.whNumber;
+
+                bool success = await SendReservationToApi(UserID, MalzemKodu, Notes, quantity, unitRef ?? 0, WhNumber);
+
+                // ❌ ARTIK MANUEL UPDATE YOK
+                MessageBox.Show(success ? "Rezervasyon alınmıştır." : "Rezervasyon gönderilemedi.");
             }
-
-            int UserID = CurrentUser.UserID;
-            var selectedProduct = (ProductDto)dgv_Data.CurrentRow.DataBoundItem;
-            int MalzemKodu = Convert.ToInt32(txtproductRef.Text);
-            string Notes = txtNotes.Text;
-            double miktar = selectedProduct.StockQuantity;
-
-            bool success = await SendReservationToApi(UserID, MalzemKodu, Notes, miktar);
-            MessageBox.Show(success ? "Rezervasyon alınmıştır." : "Rezervasyon gönderilemedi.");
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                loading.Close();
+            }
         }
 
         void AuthorizeOtomatik()
         {
-            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ConfigurationHelper.LoadAppSettings().Token);
+            _client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer",
+                ConfigurationHelper.LoadAppSettings().Token);
         }
 
-        private async Task<bool> SendReservationToApi(int UserID, int MalzemeInt, string Note, double quantity)
+        private async Task<bool> SendReservationToApi(int UserID, int MalzemeInt, string Note, double quantity, int unitRef, int WhNumber)
         {
             if (_client == null) throw new InvalidOperationException("_client henüz oluşturulmamış.");
 
@@ -209,6 +364,8 @@ namespace ReservationApiUygulamasi.UI
                 ProductRef = MalzemeInt,
                 Notes = Note,
                 ReservedQty = quantity,
+                UnitRef = unitRef,
+                whNumber = WhNumber,
                 date = DateTime.Now
             };
 
@@ -223,27 +380,7 @@ namespace ReservationApiUygulamasi.UI
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-
-                    try
-                    {
-                        var errors = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(errorContent);
-
-                        if (errors != null && errors.Any())
-                        {
-                            var allErrors = string.Join(Environment.NewLine , errors.SelectMany(e => e.Value.Select(msg => $"{e.Key}: {msg}")));
-
-                            MessageBox.Show(allErrors, "Validation Errors", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                        else
-                        {
-                            MessageBox.Show(errorContent + "\nCode: " + response.StatusCode, "API Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                    catch
-                    {
-                        MessageBox.Show(errorContent + "\nCode: " + response.StatusCode, "API Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-
+                    MessageBox.Show(errorContent + "\nCode: " + response.StatusCode);
                     return false;
                 }
 
@@ -251,10 +388,11 @@ namespace ReservationApiUygulamasi.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("API hatası: " + ex.Message, "API Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("API hatası: " + ex.Message);
                 return false;
             }
         }
+
         private void dgv_Data_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex > 0)
@@ -276,7 +414,8 @@ namespace ReservationApiUygulamasi.UI
         {
             if (e.CloseReason == CloseReason.UserClosing)
             {
-                var result = MessageBox.Show(
+                var result = MessageBox.Show
+                (
                     "Uygulamadan çıkmak istediğinizden emin misiniz?",
                     "Çıkış Onayı",
                     MessageBoxButtons.YesNo,
@@ -292,11 +431,6 @@ namespace ReservationApiUygulamasi.UI
                     Application.Exit();
                 }
             }
-        }
-
-        private void txtNotes_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

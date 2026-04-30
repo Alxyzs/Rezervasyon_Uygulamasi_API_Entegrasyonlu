@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using ReservationApiUygulamasi.UI.Models;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
@@ -73,51 +72,6 @@ namespace ReservationApiUygulamasi.UI
             }
         }
 
-
-
-        //private async void LoadReservations()
-        //{
-        //    try
-        //    {
-        //        int userId = CurrentUser.UserID;
-
-        //        using (HttpClient httpClient = new HttpClient())
-        //        {
-        //            // API ayarlarını yükle
-        //            var apiSettings = ConfigurationHelper.LoadApiSettings();
-        //            httpClient.BaseAddress = new Uri(apiSettings.BaseUrl);
-        //            httpClient.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
-
-        //            // Token ekle
-        //            httpClient.DefaultRequestHeaders.Authorization =
-        //                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ConfigurationHelper.GetToken());
-
-        //            // API'den rezervasyonları çek
-        //            HttpResponseMessage response = await httpClient.GetAsync("api/Reservations");
-        //            response.EnsureSuccessStatusCode();
-
-        //            string responseString = await response.Content.ReadAsStringAsync();
-
-        //            // JSON'u listeye dönüştür
-        //            List<Reservation> allReservations = JsonConvert.DeserializeObject<List<Reservation>>(responseString);
-
-        //            // Kullanıcıya ait rezervasyonları filtrele
-        //            var filteredReservations = allReservations
-        //                .Where(r => r.UserID == userId)
-        //                .ToList();
-
-        //            // DataGrid'e yükle
-        //            dvgCurrentReservations.DataSource = new BindingList<Reservation>(filteredReservations);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Rezervasyonlar alınamadı: " + ex.Message);
-        //    }
-        //}
-
-
-
         public FrmSelection()
         {
             InitializeComponent();
@@ -146,7 +100,7 @@ namespace ReservationApiUygulamasi.UI
 
         private void FrmSelection_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing) // sadece X tuşu
+            if (e.CloseReason == CloseReason.UserClosing) 
             {
                 var result = MessageBox.Show
                 (
@@ -165,6 +119,13 @@ namespace ReservationApiUygulamasi.UI
                     Application.Exit();
                 }
             }
+        }
+
+        private void btnReservationUpdate_Click(object sender, EventArgs e)
+        {
+            ReservationUpdate frm = new ReservationUpdate();
+            frm.Show();
+            this.Hide();
         }
     }
 }

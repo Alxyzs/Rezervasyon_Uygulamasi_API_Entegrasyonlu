@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using System.Windows.Forms;
 using System.Linq;
 
 namespace ReservationApiUygulamasi.UI

@@ -32,6 +32,8 @@ namespace ReservationApiUygulamasi.UI
         }
         private async void btnLogin_Click(object sender, EventArgs e)
         {
+            FrmLoading loading = new FrmLoading();
+            loading.Show();
             try
             {
                 if (string.IsNullOrWhiteSpace(txtUsername.Text) || string.IsNullOrWhiteSpace(txtPassword.Text))
@@ -106,7 +108,7 @@ namespace ReservationApiUygulamasi.UI
 
                     }
                     catch
-                    {}
+                    { }
 
                     FrmSelection frm = new FrmSelection();
                     frm.Show();
@@ -125,6 +127,10 @@ namespace ReservationApiUygulamasi.UI
                 btnLogin.BackColor = Color.Red;
                 MessageBox.Show("Giriş başarısız: " + ex.Message);
                 btnLogin.BackColor = originalBtnColor;
+            }
+            finally
+            {
+                loading.Close();
             }
         }
 
