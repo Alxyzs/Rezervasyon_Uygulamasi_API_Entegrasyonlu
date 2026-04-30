@@ -92,26 +92,24 @@
             this.txtUrunID.ReadOnly = true;
             this.txtUrunID.Size = new System.Drawing.Size(256, 20);
             this.txtUrunID.TabIndex = 10;
-            this.txtUrunID.Visible = false;
             // 
             // lblUsername
             // 
             this.lblUsername.AutoSize = true;
             this.lblUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.lblUsername.ForeColor = System.Drawing.Color.White;
-            this.lblUsername.Location = new System.Drawing.Point(787, 65);
+            this.lblUsername.Location = new System.Drawing.Point(795, 65);
             this.lblUsername.Name = "lblUsername";
             this.lblUsername.Size = new System.Drawing.Size(68, 17);
             this.lblUsername.TabIndex = 17;
             this.lblUsername.Text = "Ürün ID:";
-            this.lblUsername.Visible = false;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(770, 9);
+            this.label1.Location = new System.Drawing.Point(787, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(93, 17);
             this.label1.TabIndex = 19;
@@ -234,8 +232,6 @@
         private System.Windows.Forms.DataGridView dvgCurrentReservations;
         private System.Windows.Forms.Label lblCurrentReservations;
         private System.Windows.Forms.Button btnGoBack;
-        private System.Windows.Forms.TextBox txtUrunID;
-        private System.Windows.Forms.Label lblUsername;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtRowVersion;
         private System.Windows.Forms.Label label3;
@@ -245,5 +241,7 @@
         private System.Windows.Forms.TextBox txtproductRef;
         private System.Windows.Forms.RichTextBox txtNotes;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtUrunID;
+        private System.Windows.Forms.Label lblUsername;
     }
 }

@@ -228,6 +228,7 @@
     <Compile Include="Models\CurrentUser.cs" />
     <Compile Include="Models\ProductDto.cs" />
     <Compile Include="Models\Reservation.cs" />
+    <Compile Include="Models\SignalRDto.cs" />
     <Compile Include="Models\StockUpdateDto.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="ProductList.cs">

@@ -21,8 +21,6 @@ namespace ReservationApiUygulamasi.UI
 
         private async void ReservationUpdate_Load(object sender, EventArgs e)
         {
-
-
             await LoadUserReservationsAsync();
             dvgCurrentReservations.Columns["Id"].Visible = false;
             dvgCurrentReservations.Columns["userID"].Visible = false;
@@ -111,7 +109,9 @@ namespace ReservationApiUygulamasi.UI
 
                 using (var client = new HttpClient())
                 {
-                    client.BaseAddress = new Uri("http://192.168.1.90:5003/");
+                    var apiSettings = ConfigurationHelper.LoadApiSettings();
+                    client.BaseAddress = new Uri(apiSettings.BaseUrl);
+
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ConfigurationHelper.LoadAppSettings().Token);
 
 
@@ -121,11 +121,16 @@ namespace ReservationApiUygulamasi.UI
 
                     var response = await client.PutAsync("api/Reservations", content);
 
+                    if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                    {
+                        MessageBox.Show("Bu kayıt zaten Güncellendi veya işlem çakıştı .\n Lütfen Sayfayı yenileyin !");
+                        await LoadUserReservationsAsync();
+                        return;
+                    }
                     if (response.IsSuccessStatusCode)
                     {
                         MessageBox.Show("Başarılı");
                         await LoadUserReservationsAsync();
-
                     }
                     else
                     {
