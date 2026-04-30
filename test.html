@@ -14,7 +14,7 @@
     
     <script>
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("http://192.168.1.80:5003/stockHubs")
+            .withUrl("http://192.168.1.90:5003/stockHubs")
             .withAutomaticReconnect()
             .configureLogging(signalR.LogLevel.Information)
             .build();

@@ -9,8 +9,10 @@ namespace ReservationApiUygulamasi.EL.ApiModels
 	public class CreateReservationDto
 	{
 		public int? ProductRef { get; set; }
-		public decimal? ReservedQty { get; set; }
+        public int? WhNumber { get; set; }
+        public int? UnitRef { get; set; }
+        public decimal? ReservedQty { get; set; }
 		public string? Notes { get; set; }
-		public int? UserID { get; set; }
+        public int? UserID { get; set; }
 	}
 }
