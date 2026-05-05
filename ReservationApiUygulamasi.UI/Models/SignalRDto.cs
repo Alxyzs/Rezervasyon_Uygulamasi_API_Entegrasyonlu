@@ -13,5 +13,7 @@ namespace ReservationApiUygulamasi.UI.Models
         public string Message { get; set; }
         public DateTime UpdateAt { get; set; }
         public double Quantity { get; set; }
+
+        public string ActionType { get; set; }
     }
 }

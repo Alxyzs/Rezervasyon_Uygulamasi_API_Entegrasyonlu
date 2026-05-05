@@ -104,6 +104,7 @@ namespace ReservationApiUygulamasi.UI
                     userID = Convert.ToInt32(txtUserID.Text),
                     reservedQty = qty,
                     notes = txtNotes.Text,
+                    productRef = Convert.ToInt32(txtproductRef.Text),
                     rowVersion = txtRowVersion.Text
                 };
 
