@@ -118,37 +118,61 @@ namespace ReservationApiUygulamasi.UI
             {
                 if (dvgCurrentReservationCancel.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Lütfen iptal etmek istediğiniz rezervasyonu seçin.");
+                    MessageBox.Show("Lütfen bir rezervasyon seçin.");
                     return;
                 }
 
-                var selectedRow = dvgCurrentReservationCancel.SelectedRows[0];
-                int reservationId = Convert.ToInt32(selectedRow.Cells["Id"].Value);
 
-                using (HttpClient httpClient = new HttpClient())
+                else
                 {
-                    var apiSettings = ConfigurationHelper.LoadApiSettings();
-                    httpClient.BaseAddress = new Uri(apiSettings.BaseUrl);
-                    httpClient.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
-                    httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ConfigurationHelper.GetToken());
+                    var selectedRow = dvgCurrentReservationCancel.SelectedRows[0];
+                    int reservationId = Convert.ToInt32(selectedRow.Cells["Id"].Value);
+                    string rowVersion = selectedRow.Cells["rowVersion"].Value.ToString();
 
-                    HttpResponseMessage response = await httpClient.DeleteAsync($"api/Reservations/{reservationId}");
+                    using (HttpClient httpClient = new HttpClient())
+                    {
+                        var apiSettings = ConfigurationHelper.LoadApiSettings();
+                        httpClient.BaseAddress = new Uri(apiSettings.BaseUrl);
+                        httpClient.Timeout = TimeSpan.FromSeconds(apiSettings.Timeout);
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        MessageBox.Show("Rezervasyon başarıyla iptal edildi.");
-                        await LoadUserReservationsAsync();
-                    }
-                    else
-                    {
-                        string error = await response.Content.ReadAsStringAsync();
-                        MessageBox.Show("Rezervasyon iptal edilemedi: " + error);
+                        httpClient.DefaultRequestHeaders.Authorization =
+                            new System.Net.Http.Headers.AuthenticationHeaderValue(
+                                "Bearer",
+                                ConfigurationHelper.GetToken());
+
+                        httpClient.DefaultRequestHeaders.Add("rowVersion", rowVersion);
+
+                        HttpResponseMessage response = await httpClient.DeleteAsync($"api/Reservations/{reservationId}");
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            MessageBox.Show("Rezervasyon silindi.");
+                            await LoadUserReservationsAsync();
+                        }
+                        if(response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                        {
+
+                            var result = MessageBox.Show("Rezervasyonu silmek istiyor musunuz?","Onay",MessageBoxButtons.YesNo,MessageBoxIcon.Question);
+
+                            if (result == DialogResult.Yes)
+                            {
+                                HttpResponseMessage responce = await httpClient.DeleteAsync($"api/Reservations/{reservationId}/force");
+                                await LoadUserReservationsAsync();
+                            }
+                            else return;
+                        }
+                        else
+                        {
+                            string error = await response.Content.ReadAsStringAsync();
+                            MessageBox.Show("Silme hatası: " + error);
+    
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Rezervasyon iptali sırasında hata: " + ex.Message);
+                MessageBox.Show("Hata: " + ex.Message);
             }
             finally
             {
