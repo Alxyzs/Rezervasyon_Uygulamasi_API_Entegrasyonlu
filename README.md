@@ -102,10 +102,9 @@ This system uses **JWT Bearer Token authentication**:
 This project is designed as a real-world simulation of an enterprise reservation system.
 
 Potential future improvements:
-- Role-based access control
-- SignalR real-time updates
-- Advanced logging dashboard
 
+- Role-based access control
+  
 ---
 
 ## 🧠 Summary
