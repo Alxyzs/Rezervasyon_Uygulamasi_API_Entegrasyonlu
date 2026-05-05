@@ -24,16 +24,6 @@ This separation ensures scalability, maintainability, and clean code structure.
 
 ---
 
-## 🌿 Branch Structure
-
-The project uses multiple branches for development separation:
-
-- **master** → Stable production version
-- **api-branch** → Web API development and backend logic
-- **ui-branch** → WinForms client integration with API
-
----
-
 ## 🔄 System Workflow
 
 1. User authenticates via API or UI
