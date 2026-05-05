@@ -21,9 +21,9 @@ namespace ReservationApiUygulamasi.BLL
 		{
 			return _dal.GetSearchUser(username, password);
 		}
-        public (bool IsValid, decimal AvailableStock) CheckStock(int? productRef, int? unitRef, int? whNumber, decimal? requestQty)
+        public (bool IsValid, decimal AvailableStock) CheckStock(int? productRef,  int? whNumber, decimal? requestQty)
         {
-            return _dal.CheckStock(productRef, unitRef, whNumber, requestQty);
+            return _dal.CheckStock(productRef, whNumber, requestQty);
         }
     }
 }

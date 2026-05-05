@@ -59,26 +59,26 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 			if (!validationResult.IsValid)
 				return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
 
-            #region GirilenMiktar ile Stok Miktarını Karşılaştırma 
-            //var stockResult = _querybll.CheckStock(dto.ProductRef,dto.UnitRef,dto.WhNumber,dto.ReservedQty);
+			#region GirilenMiktar ile Stok Miktarını Karşılaştırma 
+			var stockResult = _querybll.CheckStock(dto.ProductRef, dto.WhNumber, dto.ReservedQty);
 
-            //if (!stockResult.IsValid)
-            //{
-            //    return BadRequest(new
-            //    {
-            //        Message = "Yetersiz Stok ",
-            //        MaxQuantity = stockResult.AvailableStock
-            //    });
-            //}
-            #endregion
+			if (!stockResult.IsValid)
+			{
+				return BadRequest(new
+				{
+					Message = "Yetersiz Stok ",
+					MaxQuantity = stockResult.AvailableStock
+				});
+			}
+			#endregion
 
-            var entity = new ReservationDto
+			var entity = new ReservationDto
 			{
 				ProductRef = dto.ProductRef,
 				ReservedQty = dto.ReservedQty,
 				Notes = dto.Notes,
 				UserID = dto.UserID,
-				UnitRef = dto.UnitRef,
+				UnitRef = 23,
 				WhNumber = dto.WhNumber,
                 DATE = DateTime.UtcNow
 			};
@@ -127,7 +127,6 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 		//	return Ok("Rezervasyon eklendi");
 		//}
 		//#endregion
-
 
 
 		[HttpGet("{Id}")]//ID'ye göre arama
@@ -204,6 +203,17 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 
             _context.ReservationDto.Remove(reservation);
             await _context.SaveChangesAsync();
+
+            //Buryada SignalR ile stok bildirimi gönderildi . ONELI HERZAMAN SAVECHANGES'Ten sonra SıgnalR gonderilir .
+            await _transMitter.UpdateStocksAsync(new
+            {
+                Message = "Update Stocks . Refresh Page",
+                UpdateAt = DateTime.UtcNow,
+                Product = reservation.ProductRef,
+                Quantity = -reservation.ReservedQty
+            });//SignalRHub ile ilgili bildirim
+
+
             return Ok("Rezervasyon silindi");
         }
 
@@ -213,6 +223,9 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
         [HttpPut]
 		public async Task<IActionResult> Update([FromBody] UpdateReservationDto dto)
 		{
+			if(_context.ReservationDto == null)
+				return Problem(" 'ApiContext.ReservationDto'  is null.");
+
 			var entity = await _context.ReservationDto.FirstOrDefaultAsync(x => x.Id == dto.Id);
 
 			if (entity == null)
@@ -269,8 +282,6 @@ namespace ReservationApiUygulamasi.WebApi.Controllers
 				});
 			}
 		}
-
-
 
     }
 }

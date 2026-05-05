@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.WebSockets;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ReservationApiUygulamasi.DAL;
 using ReservationApiUygulamasi.EL.ApiModels;
 using ReservationApiUygulamasi.WebApi.Context;
 using ReservationApiUygulamasi.WebApi.Hubs;
@@ -17,8 +18,12 @@ builder.Services.AddDbContext<ApiContext>();
   // - eski  //builder.Services.AddScoped<IValidator<ReservationDto>,ReservationValidator>();
    builder.Services.AddScoped<IValidator<CreateReservationDto>, ReservationValidator>();
 //
+
+builder.Services.AddScoped<QueryDAL>(); //Bu ise appsettings'deki bilgileri DAL katmanýnda kullanmak ýcýn eklendi.
+
 // Add services to the container.
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -104,7 +109,8 @@ builder.Services.AddEndpointsApiExplorer();
 // ----
 
 //SignalR Hub Kullanmak için gerekli Servislerdir 
-	builder.Services.AddSignalR(); //SignalR'ý kullanmak için gerekli servisleri ekler  MAPLEMEDEN SONRA !!
+#region SignalR Hub Kullanmak için
+builder.Services.AddSignalR(); //SignalR'ý kullanmak için gerekli servisleri ekler  MAPLEMEDEN SONRA !!
 	builder.Services.AddScoped<StockHubTransmitter>();
 
 	builder.Services.AddCors(options =>
@@ -117,6 +123,7 @@ builder.Services.AddEndpointsApiExplorer();
 				  .AllowCredentials();
 		});
 	});
+#endregion
 //
 
 var app = builder.Build();
@@ -131,7 +138,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(); //Corsu kullanýmý ýcýn lazým .
+app.UseCors(); //Corsu kullanýmý ýcýn lazým . 
 
 app.UseAuthentication();//Bu Authorize için Authorizeden önce olacak
 
