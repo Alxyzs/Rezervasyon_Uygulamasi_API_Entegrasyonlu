@@ -2,80 +2,129 @@
 <html>
 <head>
     <title>SignalR Stock Monitor</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        h1 { font-size: 18px; margin-bottom: 16px; }
+        #status { 
+            display: inline-block; padding: 6px 14px; border-radius: 6px; 
+            font-size: 13px; font-weight: bold; margin-bottom: 12px;
+            background: #eee; color: #555;
+        }
+        #status.connected { background: #d4edda; color: #155724; }
+        #status.error { background: #f8d7da; color: #721c24; }
+        #status.reconnecting { background: #fff3cd; color: #856404; }
+        .buttons { display: flex; gap: 8px; margin-bottom: 16px; }
+        button { padding: 8px 18px; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; background: white; font-size: 13px; }
+        button:hover { background: #f0f0f0; }
+        #messages { 
+            background: white; border: 1px solid #ddd; border-radius: 8px; 
+            padding: 12px; max-height: 400px; overflow-y: auto;
+            font-family: monospace; font-size: 13px;
+        }
+        .msg { padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
+        .msg:last-child { border-bottom: none; }
+        .success { color: #155724; }
+        .error { color: #721c24; }
+        .warning { color: #856404; }
+        .info { color: #0c5460; }
+        .update { color: #4a235a; font-weight: bold; }
+        #counter {
+            font-size: 13px; color: #555; margin-bottom: 8px;
+        }
+        .clear-btn { font-size: 12px; color: #888; background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
+    </style>
 </head>
 <body>
-    <h1>SignalR Hub - TEST (WebApplicationApi.Api)</h1>
-    <div id="messages"></div>
-    <button id="connect">Bağlan</button>
-    <button id="disconnect">Bağlantıyı Kes</button>
+    <h1>SignalR Stock Monitor — TEST</h1>
 
-    <!-- SignalR CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
-    
+    <div id="status">Bağlı değil</div>
+    <br><br>
+
+    <div class="buttons">
+        <button id="connect">Bağlan</button>
+        <button id="disconnect">Bağlantıyı Kes</button>
+        <button class="clear-btn" onclick="clearMessages()">Temizle</button>
+    </div>
+
+    <div id="counter">Toplam UpdateStocks mesajı: <b id="msgCount">0</b></div>
+    <div id="messages"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+
     <script>
+        let updateCount = 0;
+
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("http://192.168.1.90:5003/stockHubs")
             .withAutomaticReconnect()
-            .configureLogging(signalR.LogLevel.Information)
+            .configureLogging(signalR.LogLevel.Warning)
             .build();
 
-        // Mesaj geldiğinde
+        // UpdateStocks mesajı geldiğinde
         connection.on("UpdateStocks", (data) => {
-            console.log("📊 Stock Update:", data);
-            addMessage(`Stock Update: ${JSON.stringify(data)}`);
+            updateCount++;
+            document.getElementById("msgCount").textContent = updateCount;
+            console.log("Stock Update:", data);
+
+            const formatted = JSON.stringify(data, null, 2);
+            addMessage(`UpdateStocks alındı:\n${formatted}`, "update");
         });
 
-        // Bağlantı durumu
         connection.onclose((error) => {
-            console.error("❌ Bağlantı kapandı:", error);
-            addMessage("❌ Bağlantı kapandı", "error");
+            setStatus("Bağlantı kapandı", "error");
+            addMessage("Bağlantı kapandı" + (error ? `: ${error}` : ""), "error");
         });
 
-        connection.onreconnecting((error) => {
-            console.warn("🔄 Yeniden bağlanıyor...", error);
-            addMessage("🔄 Yeniden bağlanıyor...", "warning");
+        connection.onreconnecting(() => {
+            setStatus("Yeniden bağlanıyor...", "reconnecting");
+            addMessage("Yeniden bağlanıyor...", "warning");
         });
 
         connection.onreconnected((connectionId) => {
-            console.log("✅ Yeniden bağlandı:", connectionId);
-            addMessage("✅ Yeniden bağlandı", "success");
+            setStatus("Bağlı", "connected");
+            addMessage(`Yeniden bağlandı (ID: ${connectionId})`, "success");
         });
 
-        // Bağlan
         document.getElementById("connect").addEventListener("click", async () => {
             try {
                 await connection.start();
-                console.log("✅ SignalR bağlantısı kuruldu");
-                addMessage("✅ Bağlantı kuruldu", "success");
+                setStatus("Bağlı", "connected");
+                addMessage("Bağlantı kuruldu", "success");
             } catch (err) {
-                console.error("Bağlantı hatası:", err);
-                addMessage(`❌ Hata: ${err}`, "error");
+                setStatus("Hata", "error");
+                addMessage(`Bağlantı hatası: ${err}`, "error");
             }
         });
 
-        // Bağlantıyı kes
         document.getElementById("disconnect").addEventListener("click", async () => {
             await connection.stop();
+            setStatus("Bağlı değil", "");
             addMessage("Bağlantı kesildi", "info");
         });
 
-        // Mesaj gösterme fonksiyonu
-        function addMessage(message, type = "info") {
-            const div = document.getElementById("messages");
-            const timestamp = new Date().toLocaleTimeString();
-            const colors = {
-                success: "green",
-                error: "red",
-                warning: "orange",
-                info: "blue"
-            };
-            div.innerHTML += `<div style="color: ${colors[type]}; margin: 5px 0;">
-                [${timestamp}] ${message}
-            </div>`;
-            div.scrollTop = div.scrollHeight;
+        function setStatus(text, cls) {
+            const el = document.getElementById("status");
+            el.textContent = text;
+            el.className = cls;
         }
 
-        // Sayfa yüklendiğinde otomatik bağlan
+        function addMessage(message, type = "info") {
+            const div = document.getElementById("messages");
+            const timestamp = new Date().toLocaleTimeString("tr-TR");
+            const el = document.createElement("div");
+            el.className = `msg ${type}`;
+            el.style.whiteSpace = "pre-wrap";
+            el.textContent = `[${timestamp}] ${message}`;
+            div.prepend(el); // En yeni üste
+        }
+
+        function clearMessages() {
+            document.getElementById("messages").innerHTML = "";
+            updateCount = 0;
+            document.getElementById("msgCount").textContent = "0";
+        }
+
+        // Sayfa açılınca otomatik bağlan
         window.addEventListener("load", () => {
             document.getElementById("connect").click();
         });

@@ -6,39 +6,46 @@ using System.Text;
 using Dapper;
 using System.Threading.Tasks;
 using ReservationApiUygulamasi.EL.ApiModels;
+using Microsoft.Extensions.Configuration;
 
 namespace ReservationApiUygulamasi.DAL
 {
 	public class QueryDAL
 	{
-        SqlConnection baglanti = new SqlConnection(@"Server=DESKTOP-J60E0B5\ATABEY;Database=PEN;User Id=sa;Password=1234;TrustServerCertificate=True;");
-		public List<UserDto> GetSearchUser(string username, string password)
+        //private readonly string _connectionString;
+
+        //public QueryDAL(IConfiguration configuration)
+        //{
+        //    _connectionString = configuration.GetConnectionString("DefaultConnection");
+        //}
+
+        SqlConnection baglanti = new SqlConnection("Server=DESKTOP-J60E0B5\\ATABEY;Database=PEN;User Id=sa;Password=1234;TrustServerCertificate=True;");
+
+        public List<UserDto> GetSearchUser(string username, string password)
 		{
 			using (var conn = baglanti)
 			{
-				string sql = $"SELECT * FROM UserDto WHERE Username = @uname AND Password = @pass";
+				string sql = "SELECT * FROM UserDto WHERE Username = @uname AND Password = @pass";
 				return conn.Query<UserDto>(sql, new { uname = username, pass = password }).ToList();
 			}
 		}
 
-        public (bool IsValid, decimal AvailableStock) CheckStock(int? productRef, int? unitRef, int? whNumber, decimal? requestQty)
+        public (bool IsValid, decimal AvailableStock) CheckStock(int? productRef , int? whNumber, decimal? requestQty)
         {
-            string sql = @"SELECT StockQuantity FROM ProductDto WHERE Id = @productRef AND UnitRef = @unitRef AND WhNumber = @whNumber";
+            string sql = @"SELECT StockQuantity FROM ProductDto WHERE Id = @productRef AND WhNumber = @whNumber";
 
-            using var conn = baglanti;
-
-            var stock = conn.QueryFirstOrDefault<decimal>(sql, new
+            using( var conn = baglanti)
             {
-                productRef,
-                unitRef,
-                whNumber
-            });
+                var stock = conn.QueryFirstOrDefault<decimal>(sql, new{productRef,whNumber});
 
-            decimal availableStock = stock;
+                decimal availableStock = stock;
 
-            bool isValid = requestQty <= availableStock;
+                bool isValid = requestQty <= availableStock;
 
-            return (isValid, availableStock);
+                return (isValid, availableStock);
+            };
         }
+
+
     }
 }

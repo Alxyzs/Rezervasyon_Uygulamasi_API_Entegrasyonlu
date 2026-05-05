@@ -17,6 +17,7 @@ namespace ReservationApiUygulamasi.EL.ApiModels
 		public string? Notes { get; set; }
 		public int? UserID { get; set; }
         public int? WhNumber { get; set; }
+
         public int? UnitRef { get; set; }
 
         //[JsonIgnore] //Api'de gösterilmesini istemediğimiz bir alan varsa JsonIgnore ile gizlenir.

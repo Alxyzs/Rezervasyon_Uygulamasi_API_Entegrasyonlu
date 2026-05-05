@@ -14,9 +14,10 @@ namespace ReservationApiUygulamasi.EL.ApiModels
 		public string? ProductCode { get; set; }
 		public string? ProductName { get; set; }
 		public double StockQuantity { get; set; }
-		public decimal ReservationQuantity { get; set; }
+		public double ReservationQuantity { get; set; }
 		public string? UnitCode { get; set; }
-		public int? UnitRef { get; set; }
+
+		//public int? UnitRef { get; set; } kaldırıldı artık adet turunden gelıyor hepsı sabit
 		public string? WhName { get; set; }
 		public Int16? WhNumber { get; set; }
 
