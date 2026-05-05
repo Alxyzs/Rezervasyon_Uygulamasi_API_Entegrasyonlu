@@ -5,6 +5,7 @@
         public static int UserID { get; set; }
         public static string username { get; set; }
         public static string password { get; set; }
+        public static int? WhNumber { get; set; }
     }
 
 }

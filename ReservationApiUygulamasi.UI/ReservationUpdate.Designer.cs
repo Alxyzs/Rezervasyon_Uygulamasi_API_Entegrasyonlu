@@ -130,7 +130,7 @@
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(787, 119);
+            this.label3.Location = new System.Drawing.Point(790, 123);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 17);
             this.label3.TabIndex = 21;
@@ -138,7 +138,7 @@
             // 
             // txtstockQty
             // 
-            this.txtstockQty.Location = new System.Drawing.Point(701, 139);
+            this.txtstockQty.Location = new System.Drawing.Point(704, 143);
             this.txtstockQty.Name = "txtstockQty";
             this.txtstockQty.Size = new System.Drawing.Size(256, 20);
             this.txtstockQty.TabIndex = 20;
@@ -153,7 +153,7 @@
             this.btnUpdateReservation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUpdateReservation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.btnUpdateReservation.ForeColor = System.Drawing.Color.White;
-            this.btnUpdateReservation.Location = new System.Drawing.Point(664, 294);
+            this.btnUpdateReservation.Location = new System.Drawing.Point(667, 298);
             this.btnUpdateReservation.Name = "btnUpdateReservation";
             this.btnUpdateReservation.Size = new System.Drawing.Size(332, 42);
             this.btnUpdateReservation.TabIndex = 26;
@@ -181,7 +181,7 @@
             // 
             // txtNotes
             // 
-            this.txtNotes.Location = new System.Drawing.Point(701, 192);
+            this.txtNotes.Location = new System.Drawing.Point(704, 196);
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(256, 85);
             this.txtNotes.TabIndex = 29;
@@ -192,7 +192,7 @@
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(810, 172);
+            this.label5.Location = new System.Drawing.Point(813, 176);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(38, 17);
             this.label5.TabIndex = 25;

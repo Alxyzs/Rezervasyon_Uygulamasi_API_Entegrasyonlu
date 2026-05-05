@@ -20,7 +20,6 @@ namespace ReservationApiUygulamasi.UI
 
         private BindingList<ProductDto> _products;
 
-        // ✅ EKLENDİ
         private BindingSource _bs = new BindingSource();
 
         public ProductList()
@@ -71,7 +70,27 @@ namespace ReservationApiUygulamasi.UI
                 messageShown = true;
             }
         }
-        private async void FadeRowColor(DataGridViewRow row)
+
+        private async void GreenFadeRowColor(DataGridViewRow row)
+        {
+            Color startColor = row.DefaultCellStyle.BackColor;
+
+            int steps = 20;
+
+            for (int i = 0; i < steps; i++)
+            {
+                await Task.Delay(100);
+
+                int r = startColor.R + (255 - startColor.R) * i / steps;
+                int g = startColor.G + (255 - startColor.G) * i / steps;
+                int b = startColor.B + (255 - startColor.B) * i / steps;
+
+                row.DefaultCellStyle.BackColor = Color.FromArgb(r, g, b);
+            }
+
+            row.DefaultCellStyle.BackColor = Color.White;
+        }
+        private async void RedFadeRowColor(DataGridViewRow row)
         {
             int steps = 20;
 
@@ -88,17 +107,29 @@ namespace ReservationApiUygulamasi.UI
 
             row.DefaultCellStyle.BackColor = Color.White;
         }
-        private void UpdateRow(SignalRDto data)
+
+        private void ReducedUpdateRow(SignalRDto data)
         {
             foreach (DataGridViewRow row in dgv_Data.Rows)
             {
-                if (row.Cells["Id"].Value.ToString() == data.Product.ToString())
+                if (row.Cells["Id"].Value.ToString() == data.Product.ToString()
+                    && Convert.ToInt32(row.Cells["WhNumber"].Value) == CurrentUser.WhNumber)
                 {
-                    row.Cells["stockQuantity"].Value = data.Quantity;
+                    double currentStock = Convert.ToDouble(row.Cells["stockQuantity"].Value);
+                    double newStock = currentStock - data.Quantity;
 
-                    row.DefaultCellStyle.BackColor = Color.Red;
+                    row.Cells["stockQuantity"].Value = newStock;
 
-                    FadeRowColor(row);
+                    if (newStock > currentStock)
+                    {
+                        row.DefaultCellStyle.BackColor = Color.LightGreen;
+                        GreenFadeRowColor(row);
+                    }
+                    else if (newStock < currentStock)
+                    {
+                        row.DefaultCellStyle.BackColor = Color.LightCoral;
+                        RedFadeRowColor(row);
+                    }
 
                     ShowUpdateMessage();
 
@@ -128,7 +159,7 @@ namespace ReservationApiUygulamasi.UI
             {
                 Invoke((MethodInvoker)(() =>
                 {
-                    UpdateRow(data);
+                    ReducedUpdateRow(data);
                 }));
             });
 
@@ -137,7 +168,6 @@ namespace ReservationApiUygulamasi.UI
             await LoadProductsFromApi();
 
             dgv_Data.Columns["id"].Visible = false;
-            dgv_Data.Columns["unitRef"].Visible = false;
             dgv_Data.Columns["whNumber"].Visible = false;
         }
 
@@ -166,9 +196,11 @@ namespace ReservationApiUygulamasi.UI
 
                         _products = new BindingList<ProductDto>(list);
 
-                        // ✅ FIX: BindingSource kullan
                         _bs.DataSource = _products;
+
                         dgv_Data.DataSource = _bs;
+                        dgv_Data.AllowUserToAddRows = false;
+
 
                         ApplyStockStatus();
                     }
@@ -221,64 +253,6 @@ namespace ReservationApiUygulamasi.UI
             }
         }
 
-        private async void StartFadeEffect(DataGridViewCell cell, Color highlightColor)
-        {
-            Color originalColor = dgv_Data.DefaultCellStyle.BackColor;
-
-            int steps = 30;
-            int delay = 20;
-
-            for (int i = 0; i <= steps; i++)
-            {
-                float ratio = (float)i / steps;
-
-                int r = (int)(highlightColor.R + (originalColor.R - highlightColor.R) * ratio);
-                int g = (int)(highlightColor.G + (originalColor.G - highlightColor.G) * ratio);
-                int b = (int)(highlightColor.B + (originalColor.B - highlightColor.B) * ratio);
-
-                cell.Style.BackColor = Color.FromArgb(r, g, b);
-
-                await Task.Delay(delay);
-            }
-
-            cell.Style.BackColor = originalColor;
-        }
-
-        private void UpdateSingleRow(SignalRDto data)
-        {
-            if (_products == null) return;
-
-            var product = _products.FirstOrDefault(p => p.Id == data.Id);
-            if (product == null) return;
-
-            double oldStock = product.StockQuantity;
-            double newStock = data.Quantity;
-
-            product.StockQuantity = newStock;
-
-            foreach (DataGridViewRow row in dgv_Data.Rows)
-            {
-                if (row.Cells["Id"].Value != null &&
-                    Convert.ToInt32(row.Cells["Id"].Value) == data.Id)
-                {
-                    Color highlightColor;
-
-                    if (newStock > oldStock)
-                        highlightColor = Color.LightGreen;
-                    else if (newStock < oldStock)
-                        highlightColor = Color.LightCoral;
-                    else
-                        highlightColor = dgv_Data.DefaultCellStyle.BackColor;
-
-                    StartFadeEffect(row.Cells["StockQuantity"], highlightColor);
-
-                    break;
-                }
-            }
-
-            ApplyStockStatus();
-        }
-
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             string searchText = txtSearch.Text.Trim().ToLower();
@@ -323,18 +297,11 @@ namespace ReservationApiUygulamasi.UI
                 string Notes = txtNotes.Text;
                 double quantity = Convert.ToInt32(txtMiktar.Text);
 
-                if (quantity > selectedProduct.StockQuantity)
-                {
-                    MessageBox.Show("Fazla Girilemez");
-                    return;
-                }
-
                 int? unitRef = selectedProduct.unitRef ?? 0;
                 int WhNumber = selectedProduct.whNumber;
 
                 bool success = await SendReservationToApi(UserID, MalzemKodu, Notes, quantity, unitRef ?? 0, WhNumber);
 
-                // ❌ ARTIK MANUEL UPDATE YOK
                 MessageBox.Show(success ? "Rezervasyon alınmıştır." : "Rezervasyon gönderilemedi.");
             }
             catch (Exception ex)
@@ -400,6 +367,7 @@ namespace ReservationApiUygulamasi.UI
                 txtproductRef.Text = dgv_Data.Rows[e.RowIndex].Cells["Id"].Value.ToString();
                 txtNotes.Text = dgv_Data.Rows[e.RowIndex].Cells["productName"].Value.ToString();
                 txtstockQuantity.Text = dgv_Data.Rows[e.RowIndex].Cells["StockQuantity"].Value.ToString();
+                CurrentUser.WhNumber = Convert.ToInt32(dgv_Data.Rows[e.RowIndex].Cells["WhNumber"].Value);
             }
         }
 
