@@ -105,7 +105,6 @@ Potential future improvements:
 - Role-based access control
 - SignalR real-time updates
 - Advanced logging dashboard
-- Modern UI redesign (WPF or web frontend)
 
 ---
 
