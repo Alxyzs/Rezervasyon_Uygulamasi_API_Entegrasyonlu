@@ -19,7 +19,7 @@ namespace ReservationApiUygulamasi.DAL
         //    _connectionString = configuration.GetConnectionString("DefaultConnection");
         //}
 
-        SqlConnection baglanti = new SqlConnection("Server=DESKTOP-J60E0B5\\ATABEY;Database=PEN;User Id=sa;Password=1234;TrustServerCertificate=True;");
+        SqlConnection baglanti = new SqlConnection("YOUR_CONNECTION_STRING");
 
         public List<UserDto> GetSearchUser(string username, string password)
 		{
